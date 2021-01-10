@@ -12,6 +12,19 @@ Your are highly encouraged to "watch" this repository for any changes.
 
 Specific instructions for each part can be found above by clicking on the part name.
 
+# Project is individual (no group)
+
+As a reminder, this project is conducted individually.
+Cheating is a serious offense and all suspected cases will be reported to the faculty.
+We will run a plagiarism detection software that will check your code for similarities with submissions from other students form this year, and past years!
+
+This software is able to identify similarities at a structural level.
+Adding whitespaces, renaming variables or moving pieces of code around will not defeat the detection software.
+So please refrain from the temptation of copying code from other sources; all the code in your repository should be written by you, and you alone.
+
+Finally, you are also responsible for making sure that your code is not shared with anyone else (even after you are done with this course).
+If similar code is found between two (or more) students, we will not try to figure out who copied on who and will report all students involved.
+
 # Scoreboard #
 
 We automatically run a series of test programs using your compiler about twice a day.
