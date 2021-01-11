@@ -33,7 +33,19 @@ Comments can either be single line:
 `// this is a comment`
 or multiline
 `/* this is a
-    multiline comment */`
+    multiline comment */`.
+Note that `/*` always indicate the start of a comment.
+The following code contains the start of a comment (and would be incorrect since the comment never ends):
+``
+int * p;
+2/* p;
+```
+While the following code does not contain a comment:
+``
+int * p;
+2/ * p;
+```
+
 
 The "#include" directive should be tokenised into the INCLUDE token.
 However, you should not do anything with the "include" preprocessor directive (it is completely ignored in the rest of the compiler).
