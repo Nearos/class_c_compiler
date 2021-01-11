@@ -38,7 +38,8 @@ If you wish to develop using your own machine, you will need to ensure that you 
 Just note that we officially only offer support for Linux, and in particular Ubuntu, the system installed on the CS lab machines.
 However, we will do our best to help you out in case you encounter any trouble setting your machine, via the ED discussion forum.
 
-
+Note that if you are using Linux (e.g. Ubuntu, Fedora, OpenSuse, ...),
+the software should be directly available from your distribution package manager and you don't need to manually install it.
 
 ## Java Development Kit (JDK) ##
 
@@ -47,22 +48,23 @@ You can test if you already have Java development kit installed by typing:
 javac -version
 ``` 
 If this returns a version equals to, or higher than 11, then you are good to go.
-Otherwise, you can obtain the JDK 11 (any version higher than 11 will work) for your specific platform following the link below.
+Otherwise, follow the link below for instructions on how to install manually the JDK 11 (feel free to install any newer version if you wish to):
 
-* https://www.oracle.com/ca-en/java/technologies/javase-jdk11-downloads.html
+* https://docs.oracle.com/en/java/javase/11/install/overview-jdk-installation.html
 
 ## Ant ##
 
-In this course, we will use Apache Ant to build your compiler.
+In this course, we will use Apache Ant as the build system.
 Again, if you are using a CS lab machine, this software should already be installed.
 If you are using your machine, you can test if the software is there by typing:
 ```
 ant -version
 ``` 
 Any recent-enough (i.e. less than 5 years old) version should do.
-In case Ant is not installed on your system, you can download the latest version here:
+In case Ant is not installed on your system, you can install it manually following these instructions:
 
-* https://ant.apache.org/bindownload.cgi
+* https://ant.apache.org/manual/install.html
+
 
 ## Git ##
 
