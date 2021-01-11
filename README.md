@@ -148,8 +148,12 @@ You should grant the following users *Reporter* access:
   * Jacob MAI (username: mpeng5)
   * Jonathan VAN DER CRUYSSE (username: jvande50)
 
-Next, you will have to clone the forked repository to your local machine.
-In order to clone the repository you should launch a terminal and type:
+Next, you will have to clone the forked repository to your local machine. You can clone the repository using either HTTPS or SSH.
+Using SSH is more secure, but requires
+[uploading a private key to GitLab](https://docs.gitlab.com/ee/ssh/). HTTPS is less secure but simpler as it only
+requires you to enter your CS account username and password. If in doubt, HTTPS is sufficient.
+
+In order to clone the repository via SSH you should ensure that you've uploaded a private key to GitLab, launch a terminal, and type:
 
 ```
 $ git clone git@gitlab.cs.mcgill.ca:XXXXXXXX/comp520-coursework-w2021.git
@@ -157,11 +161,18 @@ $ git clone git@gitlab.cs.mcgill.ca:XXXXXXXX/comp520-coursework-w2021.git
 
 where XXXXXXXX is your CS gitlab account id.
 
+In order to clone the repository via HTTPS you should launch a terminal and type:
+
+```
+$ git clone https://gitlab.cs.mcgill.ca/XXXXXXXX/comp520-coursework-w2021.git
+```
+
+where XXXXXXX is your CS  gitlab account id as above, and you should be prompted to type in your CS gitlab account id and password.
 
 ## Development environment (editor) setup
 You can choose to use any development environment for your project, such as IntelliJ, Eclipse, Emacs, Vim or your favourite text editor.
 Choose whichever you are confident with.
-However, we higly recommend using IntelliJ Idea since you will benefit from features such as the debugger, and the project is already setup to be used with IntelliJ. 
+However, we highly recommend using IntelliJ Idea since you will benefit from features such as the debugger, and the project is already setup to be used with IntelliJ. 
 
 IntelliJ is available on the CS lab machines.
  To launch it on the CS machines, open a terminal and simply type:
