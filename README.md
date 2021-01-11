@@ -107,7 +107,7 @@ Also make sure that you do not share your tests as they should be written by you
 
 ## Register your student id and name
 
-First, we will need you fill up [this google form](TODO)
+First, we will need you fill up [this google form](https://forms.gle/CFndmUYxZpJ8xYPAA)
 in order for us to register you for the automarking.
 If you are not registered, we won't be able to mark you.
 Also please make sure to keep `comp520-coursework-w2021` as your repository name, otherwise automarking will fail.
