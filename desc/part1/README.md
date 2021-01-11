@@ -49,7 +49,9 @@ int * p;
 
 The "#include" directive should be tokenised into the INCLUDE token.
 However, you should not do anything with the "include" preprocessor directive (it is completely ignored in the rest of the compiler).
-Furthermore, we consider only integer numbers, and therefore you need not implement support for hexadecimal or octal numbers.
+
+When it comes to number, we only consider integer numbers.
+Therefore you do not need to implement support for hexadecimal or octal numbers.
 
 The list of characters to escape are the same as in Java plus the null character `'\0'`.
 Please check this [link](http://docs.oracle.com/javase/tutorial/java/data/characters.html) for the full list of Java escaped characters.
