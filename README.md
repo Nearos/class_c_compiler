@@ -31,6 +31,50 @@ We automatically run a series of test programs using your compiler about twice a
 You can keep track of your progress and see how many tests pass/fail using the scoreboard by following this link **once the automarking will start**: TBC.
 The scoreboard **is provided as a best effort service**, do not rely on it as it may come down unexpectedly:no guarantees are offered.
 
+# Software requirements #
+
+If you use CS department lab machines, all the software requires to develop your compiler should be already installed.
+If you wish to develop using your own machine, you will need to ensure that you have the following software installed.
+Just note that we officially only offer support for Linux, and in particular Ubuntu, the system installed on the CS lab machines.
+However, we will do our best to help you out in case you encounter any trouble setting your machine, via the ED discussion forum.
+
+
+
+## Java Development Kit (JDK) ##
+
+You can test if you already have Java development kit installed by typing:
+```
+javac -version
+``` 
+If this returns a version equals to, or higher than 11, then you are good to go.
+Otherwise, you can obtain the JDK 11 (any version higher than 11 will work) for your specific platform following the link below.
+
+* https://www.oracle.com/ca-en/java/technologies/javase-jdk11-downloads.html
+
+## Ant ##
+
+In this course, we will use Apache Ant to build your compiler.
+Again, if you are using a CS lab machine, this software should already be installed.
+If you are using your machine, you can test if the software is there by typing:
+```
+ant -version
+``` 
+Any recent-enough (i.e. less than 5 years old) version should do.
+In case Ant is not installed on your system, you can download the latest version here:
+
+* https://ant.apache.org/bindownload.cgi
+
+## Git ##
+
+To test if git is already installed on your machine, type:
+
+```
+git --version
+```
+If this is not the case, you can follow this link with instructions on how to install git:
+* https://www.atlassian.com/git/tutorials/install-git
+
+
 # Marking #
 
 The marking will be done using an automated test suite on a Linux machine using Java 11.
@@ -144,6 +188,8 @@ The program should now have run successfully
 ## Building the project
 In order to build the project you must have Ant installed, which is installed already on the CS lab machines.
 Your local copy of the repository contains an Ant build file (`build.xml`).
+Please **do not modify this file** as our automatic marker will replace it with our own.
+
 You can build the project from the commandline by typing:
 ```
 $ ant build
