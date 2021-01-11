@@ -97,8 +97,6 @@ Now, grant access to the teaching staff
 
 ![Granting the teaching staff read access](/figures/gl_permissions1.png "Granting the teaching staff read access.")
 
-![Granting the teaching staff read access](/figures/gl_permissions2.png "Granting the teaching staff read access.")
-
 You should grant the following users *Reporter* access:
   * TODO
   * Christophe Dubach (username: cdubach)
