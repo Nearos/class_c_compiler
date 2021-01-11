@@ -36,12 +36,12 @@ or multiline
     multiline comment */`.
 Note that `/*` always indicate the start of a comment.
 The following code contains the start of a comment (and would be incorrect since the comment never ends):
-``
+```
 int * p;
 2/* p;
 ```
 While the following code does not contain a comment:
-``
+```
 int * p;
 2/ * p;
 ```
