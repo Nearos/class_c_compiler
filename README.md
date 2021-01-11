@@ -144,9 +144,9 @@ Now, grant access to the teaching staff
 ![Granting the teaching staff read access](/figures/gl_permissions1.png "Granting the teaching staff read access.")
 
 You should grant the following users *Reporter* access:
-  * TODO
-  * Christophe Dubach (username: cdubach)
-  * Jacob Mai (username: mpeng5)
+  * Christophe DUBACH (username: cdubach)
+  * Jacob MAI (username: mpeng5)
+  * Jonathan VAN DER CRUYSSE (username: jvande50)
 
 Next, you will have to clone the forked repository to your local machine.
 In order to clone the repository you should launch a terminal and type:
