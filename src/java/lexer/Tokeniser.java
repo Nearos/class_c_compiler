@@ -173,7 +173,7 @@ public class Tokeniser {
             }
             String theString = sb.toString();
 
-            return new Token(TokenClass.CHAR_LITERAL, theString, line, column);
+            return new Token(TokenClass.STRING_LITERAL, theString, line, column);
         }
 
         if(c == '='){
