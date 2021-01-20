@@ -136,7 +136,12 @@ public class Tokeniser {
             while(c!='\''){
                 if( c == '\\'){
                     c = scanner.next(); //this one is allowed to be ' without terminating the literal
-                    sb.append(resolveEscape(c)); 
+                    char unescaped = resolveEscape(c);
+                    if(unescaped == c){ //not a valid escape sequence
+                        error(c, line, column);
+                        return new Token(TokenClass.INVALID, line, column);
+                    }
+                    sb.append(unescaped); 
                 }else{
                     sb.append(c);
                 }
@@ -155,7 +160,12 @@ public class Tokeniser {
             while(c!='\"'){
                 if( c == '\\'){
                     c = scanner.next(); //this one is allowed to be ' without terminating the literal
-                    sb.append(resolveEscape(c)); 
+                    char unescaped = resolveEscape(c);
+                    if(unescaped == c){ //not a valid escape sequence
+                        error(c, line, column);
+                        return new Token(TokenClass.INVALID, line, column);
+                    }
+                    sb.append(unescaped);
                 }else{
                     sb.append(c);
                 }
