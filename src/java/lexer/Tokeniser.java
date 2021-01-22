@@ -44,16 +44,16 @@ public class Tokeniser {
     }
 
     private char resolveEscape(char letter){
-        if(letter == 't')letter = '\t';
-        if(letter == 'b')letter = '\b';
-        if(letter == 'n')letter = '\n';
-        if(letter == 'r')letter = '\r';
-        if(letter == 'f')letter = '\f';
-        if(letter == '\'')letter = '\'';
-        if(letter == '\"')letter = '\"';
-        if(letter == '\\')letter = '\\';
-        if(letter == '0')letter = '\0';
-        return letter;
+        if(letter == 't')return '\t';
+        if(letter == 'b')return '\b';
+        if(letter == 'n')return '\n';
+        if(letter == 'r')return '\r';
+        if(letter == 'f')return '\f';
+        if(letter == '\'')return '\'';
+        if(letter == '\"')return '\"';
+        if(letter == '\\')return '\\';
+        if(letter == '0')return '\0';
+        return 'n';
     }
 
     /*
@@ -137,7 +137,7 @@ public class Tokeniser {
                 if( c == '\\'){
                     c = scanner.next(); //this one is allowed to be ' without terminating the literal
                     char unescaped = resolveEscape(c);
-                    if(unescaped == c){ //not a valid escape sequence
+                    if(unescaped == 'n'){ //not a valid escape sequence
                         error(c, line, column);
                         return new Token(TokenClass.INVALID, line, column);
                     }
@@ -161,7 +161,7 @@ public class Tokeniser {
                 if( c == '\\'){
                     c = scanner.next(); //this one is allowed to be ' without terminating the literal
                     char unescaped = resolveEscape(c);
-                    if(unescaped == c){ //not a valid escape sequence
+                    if(unescaped == 'n'){ //not a valid escape sequence
                         error(c, line, column);
                         return new Token(TokenClass.INVALID, line, column);
                     }
