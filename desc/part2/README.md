@@ -324,6 +324,7 @@ i+2=3;
 * src/java/ast/ASTVisitor.java : This is the visitor interface for the AST.
 * src/java/ast/ASTPrinter.java : This the AST printer built as a visitor.
 * src/java/ast/\*.java : These files implements some of the AST nodes.
+* src/java/sem/\*.java : These files providing you with a starting point to implement semantic analysis.
 * desc/part2/typing-rules/rules.pdf : This file specify the typing rules for our language.
 * desct/part2/fibonacci.c-ast-dump: This file shows you what the AST output should look like for the fibonacci test program.
 
