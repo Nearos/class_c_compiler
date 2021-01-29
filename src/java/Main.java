@@ -1,10 +1,15 @@
+import ast.ASTPrinter;
+import ast.Program;
 import lexer.Scanner;
 import lexer.Token;
 import lexer.Tokeniser;
 import parser.Parser;
+import sem.SemanticAnalyzer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 
 /**
@@ -26,7 +31,7 @@ public class Main {
     }
 
     private static void usage() {
-        System.out.println("Usage: java "+ Main.class.getSimpleName()+" pass inputfile outputfile");
+        System.out.println("Usage: java "+Main.class.getSimpleName()+" pass inputfile outputfile");
         System.out.println("where pass is either: -lexer, -parser, -ast, -sem or -gen");
         System.exit(-1);
     }
@@ -66,7 +71,7 @@ public class Main {
             if (tokeniser.getErrorCount() == 0)
         		System.out.println("Lexing: pass");
     	    else
-        		System.out.println("Lexing: failed ("+tokeniser.getErrorCount()+" errors)");	
+        		System.out.println("Lexing: failed ("+tokeniser.getErrorCount()+" errors)");
             System.exit(tokeniser.getErrorCount() == 0 ? PASS : LEXER_FAIL);
         } else if (mode == Mode.PARSER) {
 		    Parser parser = new Parser(tokeniser);
@@ -77,10 +82,38 @@ public class Main {
 		    	System.out.println("Parsing: failed ("+parser.getErrorCount()+" errors)");
 		    System.exit(parser.getErrorCount() == 0 ? PASS : PARSER_FAIL);
         }  else if (mode == Mode.AST) {
-            System.exit(MODE_FAIL);
+            Parser parser = new Parser(tokeniser);
+            Program programAst = parser.parse();
+            if (parser.getErrorCount() == 0) {                
+                PrintWriter writer;
+                StringWriter sw = new StringWriter();
+                try {
+                    writer = new PrintWriter(sw);
+                    programAst.accept(new ASTPrinter(writer));
+                    writer.flush();
+                    System.out.print(sw.toString());
+                    writer.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else
+                System.out.println("Parsing: failed ("+parser.getErrorCount()+" errors)");
+            System.exit(parser.getErrorCount() == 0 ? PASS : PARSER_FAIL);
+        } else if (mode == Mode.SEMANTICANALYSIS) {
+            Parser parser = new Parser(tokeniser);
+            Program programAst = parser.parse();
+            if (parser.getErrorCount() == 0) {
+                SemanticAnalyzer sem = new SemanticAnalyzer();
+                int errors = sem.analyze(programAst);
+                if (errors == 0)
+                    System.out.println("Semantic analysis: Pass");
+                else
+                    System.out.println("Semantic analysis: Failed (" + errors + ")");
+                System.exit(errors == 0 ? PASS : SEM_FAIL);
+            } else
+                System.exit(PARSER_FAIL);
         } else if (mode == Mode.GEN) {
             System.exit(MODE_FAIL);
-
         } else {
         	System.exit(MODE_FAIL);
         }
