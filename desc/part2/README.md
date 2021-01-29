@@ -321,11 +321,13 @@ i+2=3;
 
 ## New Files
 * grammar/abstract_grammar.txt : This file describes the abstract grammar that defines our AST.
-* src/ast/ASTVisitor.java : This is the visitor interface for the AST.
-* src/ast/ASTPrinter.java : This the AST printer built as a visitor.
-* src/ast/\*.java : These files implements some of the AST nodes.
+* src/java/ast/ASTVisitor.java : This is the visitor interface for the AST.
+* src/java/ast/ASTPrinter.java : This the AST printer built as a visitor.
+* src/java/ast/\*.java : These files implements some of the AST nodes.
+* desc/part2/typing-rules/rules.pdf : This file specify the typing rules for our language.
+* desct/part2/fibonacci.c-ast-dump: This file shows you what the AST output should look like for the fibonacci test program.
 
-A new package has been added under `src/sem/`. This package contains template classes to get you started on implementing the semantic analysis.
+A new package has been added under `src/java/sem/`. This package contains template classes to get you started on implementing the semantic analysis.
 
  * The `sem.SemanticAnalyzer` is the only class which `Main.java` directly interfaces with for semantic analysis. Inside this class you should run all of your semantic visitors.
  * The `sem.NameAnalysisVisitor` is a template for the name analysis.
