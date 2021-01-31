@@ -302,20 +302,26 @@ char c;
 i=(int)c;
 ```
 
-## 7. Checking assignments
+## 7. Checking lvalues
 
-Finally, your last task will consist in checking that the left hand side expression of an assignment statement is one of the following: VarExpr, FieldAccessExpr, ArrayAccessExpr or ValueAtExpr.
+Finally, your last task will consist in checking that *lvalues* (left-values) are the only expressions that can appear on the left-hand side of an assignment or as an argument to the *address-of* operator (&). 
+Intuitivily, an *lvalue* represents some identifiable memory location that has a corresponding address. 
+
+In our language, the only *lvalues* are: VarExpr, FieldAccessExpr, ArrayAccessExpr or ValueAtExpr.
 For instance the following code is legal:
 ```C
 int i;
 int* p;
-i=0;
-*p=i;
+
+i  = 0;
+*p = i;
+p  = &i;
 ```
-while the following code is invalid:
+whereas the following code is invalid:
 ```C
 int i;
-i+2=3;
+i+2=3; // i+2 is not an lvalue
+&3;    // 3 is not an lvalue
 ```
 
 
