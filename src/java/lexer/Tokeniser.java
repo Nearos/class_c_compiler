@@ -264,20 +264,30 @@ public class Tokeniser {
         if (c == '/'){
             try{
                 if(scanner.peek()=='/'){//this is a comment
-                    while(scanner.next()!='\n'){}
+                    try{
+                        while(scanner.next()!='\n'){}
+                    }catch(EOFException e){
+                        return new Token(TokenClass.EOF, line, column);
+                    }
                     return next();
                 }
                 if(scanner.peek()=='*'){/*so is this*/
                     scanner.next();
-                    while(true){
-                        c = scanner.next();
-                        if(c == '*'){
+                    try{
+                        while(true){
                             c = scanner.next();
-                            if(c=='/'){
-                                break;
+                            if(c == '*'){
+                                c = scanner.next();
+                                if(c=='/'){
+                                    break;
+                                }
                             }
-                        }
 
+                        }
+                    }catch(EOFException e){
+                        //unterminated /* comment
+                        error(c, line, column);
+                        return new Token(TokenClass.INVALID, line, column);
                     }
                     return next();
                 }
