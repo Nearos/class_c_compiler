@@ -162,7 +162,7 @@ public class Parser {
     }
 
     private void parseFunDecls() {
-        while(!accept(TokenClass.EOF)){
+        while(accept(TokenClass.INT, TokenClass.CHAR, TokenClass.VOID, TokenClass.STRUCT)){
             parseFunDecl();
         }
     }
@@ -184,10 +184,11 @@ public class Parser {
         expect(TokenClass.STRUCT);
         expect(TokenClass.IDENTIFIER);
         expect(TokenClass.LBRA);
-        while(!accept(TokenClass.RBRA)){
+        parseVarDecl();
+        while(accept(TokenClass.STRUCT, TokenClass.VOID, TokenClass.INT, TokenClass.CHAR)){
             parseVarDecl();
         }
-        nextToken();
+        expect(TokenClass.RBRA);
         expect(TokenClass.SC);
     }
 
@@ -240,7 +241,11 @@ public class Parser {
         while(accept(TokenClass.STRUCT, TokenClass.INT, TokenClass.VOID, TokenClass.CHAR)){
             parseVarDecl();
         }
-        while(!accept(TokenClass.RBRA)){
+        //while accept(first(stmt))
+        while(accept(TokenClass.LBRA, TokenClass.WHILE, TokenClass.IF, TokenClass.RETURN,
+            TokenClass.LPAR, TokenClass.IDENTIFIER, TokenClass.INT_LITERAL, TokenClass.PLUS, TokenClass.MINUS,
+            TokenClass.CHAR_LITERAL, TokenClass.STRING_LITERAL, TokenClass.ASTERIX, TokenClass.AND, TokenClass.SIZEOF)){
+
             if(accept(TokenClass.EOF)){
                 error(TokenClass.RBRA);
                 return;
