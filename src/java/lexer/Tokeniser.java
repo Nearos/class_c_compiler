@@ -74,13 +74,16 @@ public class Tokeniser {
         if(Character.isDigit(c)){
             StringBuilder sb = new StringBuilder();
             sb.append(c);
-            c = scanner.peek();
-            while(Character.isDigit(c)){
-                scanner.next();
-                sb.append(c);
-
+            try{
                 c = scanner.peek();
-            }
+                while(Character.isDigit(c)){
+                    scanner.next();
+                    sb.append(c);
+
+                    c = scanner.peek();
+      
+                }
+            }catch(EOFException e){}
 
             return new Token(TokenClass.INT_LITERAL, sb.toString(), line, column);
         }
@@ -88,13 +91,15 @@ public class Tokeniser {
         if(Character.isLetter(c)||c=='_'){
             StringBuilder sb = new StringBuilder();
             sb.append(c);
-            c = scanner.peek();
-            while(Character.isLetter(c)||c=='_'){
-                scanner.next();
-                sb.append(c);
-
+            try{
                 c = scanner.peek();
-            }
+                while(Character.isLetter(c)||Character.isDigit(c)||c=='_'){
+                    scanner.next();
+                    sb.append(c);
+
+                    c = scanner.peek();
+                }
+            }catch(EOFException e){}//file ended
 
             String name = sb.toString();
 
@@ -177,58 +182,70 @@ public class Tokeniser {
         }
 
         if(c == '='){
-            char next = scanner.peek();
-            if(next == '='){
-                scanner.next();//consume the peeked character
-                return new Token(TokenClass.EQ, line, column);
-            }
+            try{
+                char next = scanner.peek();
+                if(next == '='){
+                    scanner.next();//consume the peeked character
+                    return new Token(TokenClass.EQ, line, column);
+                }
+            }catch(EOFException e){}//ends with assign
 
             return new Token(TokenClass.ASSIGN, line, column);
         }
 
-        if(c == '|'){
-            char next = scanner.peek();
-            if(next == '|'){
-                scanner.next();
-                return new Token(TokenClass.LOGOR, line, column);
-            }//else error
-        }
-
-        if(c=='!'){
-            char next = scanner.peek();
-
-            if(next == '='){
-                scanner.next();
-                return new Token(TokenClass.NE, line, column);
+        try{
+            if(c == '|'){
+                char next = scanner.peek();
+                if(next == '|'){
+                    scanner.next();
+                    return new Token(TokenClass.LOGOR, line, column);
+                }//else error, eof error
             }
-        }
+
+            if(c=='!'){
+                char next = scanner.peek();
+
+                if(next == '='){
+                    scanner.next();
+                    return new Token(TokenClass.NE, line, column);
+                }//else error, eof error
+            }
+        }catch(EOFException e){} //Error... tokens are incomplete
 
         if(c=='<'){
-            char next = scanner.peek();
+            try{
+                char next = scanner.peek();
 
-            if(next == '='){
-                scanner.next();
-                return new Token(TokenClass.LE, line, column);
-            }
+                if(next == '='){
+                    scanner.next();
+                    return new Token(TokenClass.LE, line, column);
+                }
+            }catch(EOFException e){}
             return new Token(TokenClass.LT, line, column);
         }
 
         if(c=='>'){
-            char next = scanner.peek();
+            try{
+                char next = scanner.peek();
 
-            if(next == '='){
-                scanner.next();
-                return new Token(TokenClass.GE, line, column);
-            }
+                if(next == '='){
+                    scanner.next();
+                    return new Token(TokenClass.GE, line, column);
+                }
+            }catch(EOFException e){}
             return new Token(TokenClass.GT, line, column);
         }
 
         if(c=='#'){
             final String include ="include";
             for(char i : include.toCharArray()){
-                if(scanner.peek()!=i){
-                    error(c, line, column);
-                    return new Token(TokenClass.INVALID, line, column);
+                try{
+                    if(scanner.peek()!=i){
+                        error(c, line, column);
+                        return new Token(TokenClass.INVALID, line, column);
+                    }
+                }catch(EOFException e){
+                    return new Token(TokenClass.INVALID, line, column); //file ended before token completed
                 }
                 scanner.next();
             }
@@ -245,24 +262,26 @@ public class Tokeniser {
             return new Token(TokenClass.ASTERIX, line, column);
 
         if (c == '/'){
-            if(scanner.peek()=='/'){//this is a comment
-                while(scanner.next()!='\n'){}
-                return next();
-            }
-            if(scanner.peek()=='*'){/*so is this*/
-                scanner.next();
-                while(true){
-                    c = scanner.next();
-                    if(c == '*'){
-                        c = scanner.next();
-                        if(c=='/'){
-                            break;
-                        }
-                    }
-
+            try{
+                if(scanner.peek()=='/'){//this is a comment
+                    while(scanner.next()!='\n'){}
+                    return next();
                 }
-                return next();
-            }
+                if(scanner.peek()=='*'){/*so is this*/
+                    scanner.next();
+                    while(true){
+                        c = scanner.next();
+                        if(c == '*'){
+                            c = scanner.next();
+                            if(c=='/'){
+                                break;
+                            }
+                        }
+
+                    }
+                    return next();
+                }
+            }catch(EOFException e){}//ends with /
             return new Token(TokenClass.DIV, line, column);
         }
 
@@ -270,11 +289,13 @@ public class Tokeniser {
             return new Token(TokenClass.REM, line, column);
 
         if (c == '&'){
-            char next = scanner.peek();
-            if(next == '&'){
-                scanner.next();
-                return new Token(TokenClass.LOGAND, line, column);
-            }
+            try{
+                char next = scanner.peek();
+                if(next == '&'){
+                    scanner.next();
+                    return new Token(TokenClass.LOGAND, line, column);
+                }
+            }catch (EOFException e){}
             return new Token(TokenClass.AND, line, column);
         }
         
