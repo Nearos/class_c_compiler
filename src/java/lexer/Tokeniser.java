@@ -266,10 +266,10 @@ public class Tokeniser {
                 if(scanner.peek()=='/'){//this is a comment
                     try{
                         while(scanner.next()!='\n'){}
+                        return next();
                     }catch(EOFException e){
                         return new Token(TokenClass.EOF, line, column);
                     }
-                    return next();
                 }
                 if(scanner.peek()=='*'){/*so is this*/
                     scanner.next();
@@ -277,21 +277,23 @@ public class Tokeniser {
                         while(true){
                             c = scanner.next();
                             if(c == '*'){
-                                c = scanner.next();
+                                c = scanner.peek();
                                 if(c=='/'){
+                                    scanner.next();
                                     break;
                                 }
                             }
 
-                        }
+                        } 
                     }catch(EOFException e){
                         //unterminated /* comment
                         error(c, line, column);
                         return new Token(TokenClass.INVALID, line, column);
-                    }
+                    }    
                     return next();
                 }
-            }catch(EOFException e){}//ends with /
+            }catch(EOFException e){}//ends with / 
+            System.out.println("Returning DIV");
             return new Token(TokenClass.DIV, line, column);
         }
 
