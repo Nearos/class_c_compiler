@@ -63,40 +63,7 @@ Hint: It is recommended to use the [Character-class methods](https://docs.oracle
 ## 2. Grammar
 
 Your next job will consist in taking the [grammar](../../grammar/ebnf.txt) expressed in EBNF form and transform it into an equivalent context-free LL(k) grammar.
-You should make sure the resulting grammar is non-ambiguous, eliminate left recursion and ensure that the usual C precedence and associativity rules for operators are respected based on this table:
- 
-| Precedence    |Operator       | Description       |Associativity  |
-| :------------ | :------------ | :-----------      | :-----------  |
-| 1             | ()            | Function call     | Left-to-right |
-| 1             | \[\]          | Array subscripting | Left-to-right |
-| 1             | .             | Structure member access | Left-to-right |
-| 2             | +             | Unary plus | Right-to-left |
-| 2             | -             | Unary minus | Right-to-left |
-| 2             | (type)        | Type cast | Right-to-left |
-| 2             | *             | Indirection | Right-to-left |
-| 2             | &             | Address of | Right-to-left |
-| 2             | sizeof(type)  | Size of type| Right-to-left |
-| 3             | * / %         | Multiplication, division, remainder | Left-to-right |
-| 4             | + -           | Addition, subtraction | Left-to-right |
-| 5             | < <= > >=     | Relational operators | Left-to-right |
-| 6             | == \!=        | Relational operators | Left-to-right |
-| 7             | &&            | Logical AND | Left-to-right |
-| 8             | ⎮⎮            | Logical OR | Left-to-right |
-  
-For instance:
- 
-```C
-array[1][2]       // == (array[1])[2]
-mystruct.field[1] // (mystruct.field)[1]
-2*3+4             // == (2*3)+4
-2+3*4             // == 2+(3*4)
-&*ptr             // == &(*ptr)
-&p[1]             // == &(p[1])
-```
-
-
-Note that although we require you to parse the expression following the precedence and associativity rules, this will only be checked in part 2 of the coursework where you will have to output the Abstract Syntax Tree.
-However, we encourage you to directly implement the correct rules to avoid problems in the later stages of your compiler.
+You should eliminate left-recursion from the grammar and, if needed, left-factorize it.
 This is done by modifying the grammar slightly as seen during the lectures.
 
 
