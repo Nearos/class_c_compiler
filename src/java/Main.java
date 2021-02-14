@@ -19,7 +19,7 @@ import java.io.StringWriter;
  *     which returns the total number of lexing errors.
  */
 public class Main {
-	private static final int FILE_NOT_FOUND = 2;
+    private static final int FILE_NOT_FOUND = 2;
     private static final int MODE_FAIL      = 254;
     private static final int LEXER_FAIL     = 250;
     private static final int PARSER_FAIL    = 245;
@@ -67,20 +67,20 @@ public class Main {
         Tokeniser tokeniser = new Tokeniser(scanner);
         if (mode == Mode.LEXER) {
             for (Token t = tokeniser.nextToken(); t.tokenClass != Token.TokenClass.EOF; t = tokeniser.nextToken()) 
-            	System.out.println(t);
+                System.out.println(t);
             if (tokeniser.getErrorCount() == 0)
-        		System.out.println("Lexing: pass");
-    	    else
-        		System.out.println("Lexing: failed ("+tokeniser.getErrorCount()+" errors)");
+                System.out.println("Lexing: pass");
+            else
+                System.out.println("Lexing: failed ("+tokeniser.getErrorCount()+" errors)");
             System.exit(tokeniser.getErrorCount() == 0 ? PASS : LEXER_FAIL);
         } else if (mode == Mode.PARSER) {
-		    Parser parser = new Parser(tokeniser);
-		    parser.parse();
-		    if (parser.getErrorCount() == 0)
-		    	System.out.println("Parsing: pass");
-		    else
-		    	System.out.println("Parsing: failed ("+parser.getErrorCount()+" errors)");
-		    System.exit(parser.getErrorCount() == 0 ? PASS : PARSER_FAIL);
+            Parser parser = new Parser(tokeniser);
+            parser.parse();
+            if (parser.getErrorCount() == 0)
+                System.out.println("Parsing: pass");
+            else
+                System.out.println("Parsing: failed ("+parser.getErrorCount()+" errors)");
+            System.exit(parser.getErrorCount() == 0 ? PASS : PARSER_FAIL);
         }  else if (mode == Mode.AST) {
             Parser parser = new Parser(tokeniser);
             Program programAst = parser.parse();
@@ -115,7 +115,7 @@ public class Main {
         } else if (mode == Mode.GEN) {
             System.exit(MODE_FAIL);
         } else {
-        	System.exit(MODE_FAIL);
+            System.exit(MODE_FAIL);
         }
     }
 }

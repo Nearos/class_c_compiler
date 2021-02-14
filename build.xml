@@ -5,18 +5,18 @@
                   You might have to change the value of the attribute "name" inside
                   the "project"-tag below. The value should the name of your project.
 
-		  You can import this build file into Eclipse or IntelliJ.
+      You can import this build file into Eclipse or IntelliJ.
                   In addition, you can use it directly from the commandline:
-		     $ ant build
-		  The above command will build your compiler. Ant will create
-	          and output your compiler in directory called "bin".
+         $ ant build
+      The above command will build your compiler. Ant will create
+            and output your compiler in directory called "bin".
                   After a successful build you can run your compiler by typing
                      $ java -cp bin Main
 
-		  To clean "bin" simply type
-		     $ ant clean
-		  on the commandline.		     
-		  -->
+      To clean "bin" simply type
+         $ ant clean
+      on the commandline.        
+      -->
 <!-- Replace the value of the attribute "name" with the name of YOUR project. -->
 <project basedir="." default="build" name="comp520-coursework-w2021">
   <!-- You do not need to touch anything below this comment -->
@@ -34,7 +34,7 @@
       <fileset dir="${src}">
         <exclude name="**/*.launch"/>
         <exclude name="**/*.java"/>
-	<exclude name="**/*.class"/>
+  <exclude name="**/*.class"/>
       </fileset>
     </copy>
   </target>
