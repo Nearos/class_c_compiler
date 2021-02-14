@@ -293,7 +293,6 @@ public class Tokeniser {
                     return next();
                 }
             }catch(EOFException e){}//ends with / 
-            System.out.println("Returning DIV");
             return new Token(TokenClass.DIV, line, column);
         }
 

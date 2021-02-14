@@ -201,7 +201,7 @@ public class Parser {
         if(tk == null) return null;
         StructType type = new StructType(tk.data);
         expect(TokenClass.LBRA);
-        parseVarDecl();
+        fields.add(parseVarDecl());
         while(accept(TokenClass.STRUCT, TokenClass.VOID, TokenClass.INT, TokenClass.CHAR)){
             VarDecl vd = parseVarDecl();
             fields.add(vd);
@@ -394,29 +394,42 @@ public class Parser {
     }
 
     private Expr parsePredicate(){
-        Expr ret = parsePolynomial();
+        Expr ret = parseComparison();
 
         while(accept(TokenClass.EQ, 
-            TokenClass.NE,
+            TokenClass.NE)){
+
+            Token op = expect(TokenClass.EQ, 
+                TokenClass.NE);
+
+            switch(op.tokenClass){
+                case EQ:
+                    ret = new BinOp(ret, OP.EQ, parseComparison());
+                    break;
+                case NE:
+                    ret = new BinOp(ret, OP.NE, parseComparison());
+                    break;
+            }
+        }
+        return ret;
+    }
+
+    private Expr parseComparison(){
+        Expr ret = parsePolynomial();
+
+        while(accept(
             TokenClass.LT,
             TokenClass.GT,
             TokenClass.GE,
             TokenClass.LE)){
 
-            Token op = expect(TokenClass.EQ, 
-                TokenClass.NE,
+            Token op = expect(
                 TokenClass.LT,
                 TokenClass.GT,
                 TokenClass.GE,
                 TokenClass.LE);
 
             switch(op.tokenClass){
-                case EQ:
-                    ret = new BinOp(ret, OP.EQ, parsePolynomial());
-                    break;
-                case NE:
-                    ret = new BinOp(ret, OP.NE, parsePolynomial());
-                    break;
                 case LT:
                     ret = new BinOp(ret, OP.LT, parsePolynomial());
                     break;

@@ -121,7 +121,6 @@ public class ASTPrinter implements ASTVisitor<Void> {
         indent++;
         writer.print("StructTypeDecl(");
         st.type.accept(this);
-        writer.print("\n");
         for(VarDecl vd: st.fields){
             writer.print(", \n");
             doIndent();
@@ -129,7 +128,8 @@ public class ASTPrinter implements ASTVisitor<Void> {
         }
         indent--;
         writer.print("\n");
-        writer.print(")\n");
+        doIndent();
+        writer.print(")");
         return null;
     }
 
