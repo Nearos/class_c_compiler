@@ -17,7 +17,16 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
 
 	@Override
 	public Void visitStructTypeDecl(StructTypeDecl sts) {
-		// To be completed...
+		Scope oldScope = scope;
+        scope = new Scope(null);
+
+        for(VarDecl i: sts.fields){
+            i.accept(this);
+        }
+
+        sts.scope = scope; //associate struct with scope
+        scope = oldScope;
+
 		return null;
 	}
 

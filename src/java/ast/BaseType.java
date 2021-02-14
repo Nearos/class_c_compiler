@@ -6,4 +6,8 @@ public enum BaseType implements Type {
     public <T> T accept(ASTVisitor<T> v) {
         return v.visitBaseType(this);
     }
+
+    public boolean equals(Type other){
+        return other instanceof BaseType && (BaseType)other == this;
+    }
 }

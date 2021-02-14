@@ -13,4 +13,8 @@ public class ArrayType implements Type {
     public <T> T accept(ASTVisitor<T> v) {
         return v.visitArrayType(this);
     }
+
+    public boolean equals(Type other){
+        return other instanceof ArrayType && ((ArrayType)other).element.equals(element) && ((ArrayType)other).size == size;
+    }
 }

@@ -1,6 +1,7 @@
 package ast;
 
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class ASTPrinter implements ASTVisitor<Void> {
 
@@ -9,6 +10,19 @@ public class ASTPrinter implements ASTVisitor<Void> {
 
     public ASTPrinter(PrintWriter writer) {
             this.writer = writer;
+    }
+
+    public static String printNode(ASTNode node){
+        if(node==null){
+            return "NULL";
+        }
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        node.accept(new ASTPrinter(pw));
+        pw.flush();
+        String ret =  sw.toString();
+        pw.close();
+        return ret;
     }
 
     private void doIndent(){

@@ -11,4 +11,8 @@ public class StructType implements Type {
     public <T> T accept(ASTVisitor<T> v) {
         return v.visitStructType(this);
     }
+
+    public boolean equals(Type other){
+        return other instanceof StructType && ((StructType)other).name.equals(name);
+    }
 }

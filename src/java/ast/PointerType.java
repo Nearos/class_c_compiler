@@ -2,7 +2,7 @@ package ast;
 
 public class PointerType implements Type {
 
-    Type type;
+    public final Type type;
 
     public PointerType(Type type){
         this.type = type;
@@ -11,5 +11,9 @@ public class PointerType implements Type {
 
     public <T> T accept(ASTVisitor<T> v) {
         return v.visitPointerType(this);
+    }
+
+    public boolean equals(Type other){
+        return other instanceof PointerType && ((PointerType)other).type.equals(type);
     }
 }
