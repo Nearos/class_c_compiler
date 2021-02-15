@@ -112,7 +112,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 	public Type visitAssign(Assign e){
 		Type lhs = e.lvalue.accept(this);
         Type rhs = e.rvalue.accept(this);
-        if(!lhs.equals(rhs)){
+        if(lhs==null||!lhs.equals(rhs)){
             error("Cannot assign type "+ASTPrinter.printNode(rhs)
                 +" to "+ASTPrinter.printNode(lhs));
         }
