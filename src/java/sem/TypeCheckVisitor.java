@@ -19,7 +19,6 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitBaseType(BaseType bt) {
-		// To be completed...
 		return null;
 	}
 
@@ -72,6 +71,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitVarDecl(VarDecl vd) {
+        if(vd.type == null)return null;
         if(vd.type.equals(BaseType.VOID)){
             error("Can't declare variable "+vd.varName+" of type void");
         }
@@ -128,6 +128,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
     public Type visitArrayAccessExpr(ArrayAccessExpr e){
         Type type = e.array.accept(this);
         Type indexType = e.index.accept(this);
+        if(indexType == null || type == null)return null;
         if(!indexType.equals(BaseType.INT)){
             error("Array index must be int. got "
                 +ASTPrinter.printNode(type));
@@ -148,6 +149,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
     public Type visitBinOp(BinOp bop){
     	Type lhs = bop.lhs.accept(this);
         Type rhs = bop.rhs.accept(this);
+        if(lhs == null || rhs == null)return null;
         if(lhs.equals(BaseType.INT)
             && rhs.equals(BaseType.INT)){
             return BaseType.INT;
@@ -227,7 +229,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
         for(int i=0; i!=decl.params.size(); i++){
             Type declType = decls.next().type;
             Type givenType = givens.next().accept(this);
-            if(!declType.equals(givenType)){
+            if(declType == null || !declType.equals(givenType)){
                 error("Wrong argument type passed to function "+decl.name
                     +". expected "
                     +ASTPrinter.printNode(declType)
@@ -244,7 +246,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
     	Type condType = ifs.condition.accept(this);
         ifs.consequent.accept(this);
         if(ifs.alternative != null)ifs.alternative.accept(this);
-        if(!condType.equals(BaseType.INT)){
+        if(condType == null || !condType.equals(BaseType.INT)){
             error("If condition must have type int, got type "+ASTPrinter.printNode(condType));
         }
     	return null;
@@ -253,6 +255,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
     @Override
     public Type visitReturn(Return rets){
     	Type returnType = rets.value.accept(this);
+        if(currentReturnType == null)return null;
         if(!currentReturnType.equals(returnType)){
 
             error("Type returned does not match return type of the function: expected "
@@ -271,6 +274,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
     @Override
     public Type visitTypecastExpr(TypecastExpr e){
         Type resType = e.expr.accept(this);
+        if(resType == null)return null;
     	if(resType instanceof ArrayType){
             ArrayType at = (ArrayType)resType;
             if(e.type instanceof PointerType 
@@ -301,7 +305,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
     public Type visitWhile(While ws){
     	Type condType = ws.condition.accept(this);
         ws.stmt.accept(this);
-        if(!condType.equals(BaseType.INT)){
+        if(condType == null || !condType.equals(BaseType.INT)){
             error("While condition must have type int, got type "+ASTPrinter.printNode(condType));
         }
     	return null;
