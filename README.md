@@ -7,7 +7,7 @@ Your are highly encouraged to "watch" this repository for any changes.
 
 1. [Part 1 (parser)](desc/part1/), Friday 5 February 2021 at 5pm, weight = 20%
 2. [Part 2 (ast builder + semantic analyser)](desc/part2), Friday 26 February 2021 at 5pm, weight = 20%
-3. Part 3 (code generator), Friday 19 March 2021, at 5pm, weight = 25%
+3. [Part 3 (code generator)](desc/part3), Friday 19 March 2021, at 5pm, weight = 25%
 4. Part 4 (register allocator), Wednesday 14 April 2021, at 5pm, weight = 25%
 
 Specific instructions for each part can be found above by clicking on the part name.
