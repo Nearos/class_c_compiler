@@ -1,6 +1,5 @@
 import ast.ASTPrinter;
 import ast.Program;
-import gen.CodeGenerator;
 import lexer.Scanner;
 import lexer.Token;
 import lexer.Tokeniser;
@@ -19,7 +18,7 @@ import java.io.StringWriter;
  *     moreover Tokeniser must provide a public method getErrorCount
  *     which returns the total number of lexing errors.
  */
-public class Main {
+public class MainPart2 {
 	private static final int FILE_NOT_FOUND = 2;
     private static final int MODE_FAIL      = 254;
     private static final int LEXER_FAIL     = 250;
@@ -55,7 +54,6 @@ public class Main {
         }
 
         File inputFile = new File(args[1]);
-        File outputFile = new File(args[2]);
 
         Scanner scanner;
         try {
@@ -86,9 +84,7 @@ public class Main {
         }  else if (mode == Mode.AST) {
             Parser parser = new Parser(tokeniser);
             Program programAst = parser.parse();
-            if (parser.getErrorCount() == 0) {
-                System.out.println("Parsing: pass");
-                System.out.println("Printing out AST:");
+            if (parser.getErrorCount() == 0) {                
                 PrintWriter writer;
                 StringWriter sw = new StringWriter();
                 try {
@@ -117,21 +113,7 @@ public class Main {
             } else
                 System.exit(PARSER_FAIL);
         } else if (mode == Mode.GEN) {
-            Parser parser = new Parser(tokeniser);
-            Program programAst = parser.parse();
-            if (parser.getErrorCount() > 0)
-                System.exit(PARSER_FAIL);
-            SemanticAnalyzer sem = new SemanticAnalyzer();
-            int errors = sem.analyze(programAst);
-            if (errors > 0)
-                System.exit(SEM_FAIL);
-            CodeGenerator codegen = new CodeGenerator();
-            try {
-                codegen.emitProgram(programAst, outputFile);
-            } catch (FileNotFoundException e) {
-                System.out.println("File "+outputFile.toString()+" does not exist.");
-                System.exit(FILE_NOT_FOUND);
-            }
+            System.exit(MODE_FAIL);
         } else {
         	System.exit(MODE_FAIL);
         }
