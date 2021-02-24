@@ -101,6 +101,10 @@ public class NaiveRegAlloc {
                 // emit new instructions that don't use any virtual registers and transform push/pop registers instructions into real sequence of instructions
                 // When dealign with push/pop registers, we assume that if a virtual register is used in the section, then it must be written into.
                 final AssemblyProgram.Section newSection = newProg.newSection(AssemblyProgram.Section.Type.TEXT);
+                List<AssemblyItem.Label> vrLabels = new LinkedList<>(vrMap.values());
+                List<AssemblyItem.Label> reverseVrLabels = new LinkedList<>(vrLabels);
+                Collections.reverse(reverseVrLabels);
+
                 section.items.forEach(item ->
                         item.accept(new AssemblyItemVisitor() {
                             public void visitComment(AssemblyItem.Comment comment) {
@@ -116,7 +120,7 @@ public class NaiveRegAlloc {
 
                                 if (insn == AssemblyItem.Instruction.pushRegisters) {
                                     newSection.emit("Original instruction: pushRegisters");
-                                    for (AssemblyItem.Label l : vrMap.values()) {
+                                    for (AssemblyItem.Label l : vrLabels) {
                                         // load content of memory at label into $t0
                                         newSection.emitLA(Register.Arch.t0, l);
                                         newSection.emitLoad("lw", Register.Arch.t0, Register.Arch.t0, 0);
@@ -127,7 +131,7 @@ public class NaiveRegAlloc {
                                     }
                                 } else if (insn == AssemblyItem.Instruction.popRegisters) {
                                     newSection.emit("Original instruction: popRegisters");
-                                    for (AssemblyItem.Label l : vrMap.values()) {
+                                    for (AssemblyItem.Label l : reverseVrLabels) {
                                         // pop from stack into $t0
                                         newSection.emitLoad("lw", Register.Arch.t0, Register.Arch.sp, 0);
                                         newSection.emit("addi", Register.Arch.sp, Register.Arch.sp, 4);
