@@ -29,8 +29,8 @@ public abstract class Register {
         public static final Arch zero = new Arch(0,"zero");
         public static final Arch v0 = new Arch(2,"v0");
         public static final Arch v1 = new Arch(3,"v1");
-        public static final Arch a0 = new Arch(4,"a1");
-        public static final Arch a1 = new Arch(5,"a2");
+        public static final Arch a0 = new Arch(4,"a0");
+        public static final Arch a1 = new Arch(5,"a1");
         public static final Arch a2 = new Arch(6,"a2");
         public static final Arch a3 = new Arch(7,"a3");
         public static final Arch t0 = new Arch(8,"t0");
