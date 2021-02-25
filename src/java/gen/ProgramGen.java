@@ -11,12 +11,13 @@ import gen.asm.AssemblyProgram;
  */
 public class ProgramGen implements ASTVisitor<Void> {
 
-    private AssemblyProgram asmProg;
+    private final AssemblyProgram asmProg;
 
-    private final AssemblyProgram.Section dataSection = asmProg.newSection(AssemblyProgram.Section.Type.DATA);
+    private final AssemblyProgram.Section dataSection ;
 
     public ProgramGen(AssemblyProgram asmProg) {
         this.asmProg = asmProg;
+        this.dataSection = asmProg.newSection(AssemblyProgram.Section.Type.DATA);
     }
 
     @Override
