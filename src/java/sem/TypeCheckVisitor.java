@@ -255,7 +255,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
     @Override
     public Type visitReturn(Return rets){
         if(rets.value == null){
-            if(currentReturnType != null){
+            if(currentReturnType != null && !currentReturnType.equals(BaseType.VOID)){
                 error("Type returned does not match return type of the function: expected "
                 +ASTPrinter.printNode(currentReturnType)
                 +", no value returned");
