@@ -116,7 +116,8 @@ class LValueSemanticVisitor extends BaseSemanticVisitor<Boolean> {
   }
   
   public Boolean visitReturn(Return rets) {
-    rets.value.accept(this);
+    if(rets.value != null)
+      rets.value.accept(this);
     return null;
   }
   
