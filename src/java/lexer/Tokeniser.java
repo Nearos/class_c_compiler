@@ -266,7 +266,7 @@ public class Tokeniser {
                 if(scanner.peek()=='/'){//this is a comment
                     try{
                         while(scanner.next()!='\n'){}
-                        return next();
+                        return nextToken();
                     }catch(EOFException e){
                         return new Token(TokenClass.EOF, line, column);
                     }
@@ -290,7 +290,7 @@ public class Tokeniser {
                         error(c, line, column);
                         return new Token(TokenClass.INVALID, line, column);
                     }    
-                    return next();
+                    return nextToken();
                 }
             }catch(EOFException e){}//ends with / 
             return new Token(TokenClass.DIV, line, column);
