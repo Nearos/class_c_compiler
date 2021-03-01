@@ -1,6 +1,13 @@
 package ast;
 
 public interface ASTVisitor<T> {
+
+    class ShouldNotReach extends Error {
+        public ShouldNotReach() {
+            super("Current visitor should never reach this node");
+        }
+    }
+
     public T visitBaseType(BaseType bt);
     public T visitStructTypeDecl(StructTypeDecl st);
     public T visitBlock(Block b);
