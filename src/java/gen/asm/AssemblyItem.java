@@ -24,8 +24,6 @@ public abstract class AssemblyItem {
 
     public static class Directive extends AssemblyItem {
 
-        // TODO: replace this with global space allocation
-
         private final String name;
         private Directive(String name) {
             this.name = name;
