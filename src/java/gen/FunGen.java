@@ -52,7 +52,7 @@ public class FunGen implements ASTVisitor<Void> {
 
     @Override
     public Void visitVarDecl(VarDecl vd) {
-        // TODO: should allocate local variables on the stack and rember the offset from the frame pointer where they are stored (e.g. in the VarDecl AST node)
+        // TODO: should allocate local variables on the stack and remember the offset from the frame pointer where they are stored (e.g. in the VarDecl AST node)
         return null;
     }
 

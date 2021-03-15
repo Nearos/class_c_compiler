@@ -137,8 +137,8 @@ public class NaiveRegAlloc {
                                         newSection.emit("addi", Register.Arch.sp, Register.Arch.sp, 4);
 
                                         // store content of $t0 in memory at label
-                                        newSection.emitLA(Register.Arch.t0, l);
-                                        newSection.emitStore("sw", Register.Arch.t0, Register.Arch.t0, 0);
+                                        newSection.emitLA(Register.Arch.t1, l);
+                                        newSection.emitStore("sw", Register.Arch.t0, Register.Arch.t1, 0);
                                     }
                                 } else
                                     emitInstructionWithoutVirtualRegister(insn, vrMap, newSection);

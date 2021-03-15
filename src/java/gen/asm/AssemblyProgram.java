@@ -114,17 +114,6 @@ public class AssemblyProgram {
     }
 
 
-    //private final List<AssemblyItem> items = new ArrayList<AssemblyItem>();
-
-    //public List<AssemblyItem> getItems() {
-    //    return items;
-    //}
-
-
-
-
-
-
 
 
     public void print(final PrintWriter writer) {
