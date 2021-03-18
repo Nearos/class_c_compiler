@@ -1,17 +1,51 @@
 package gen;
 
 import ast.*;
-import gen.asm.AssemblyProgram;
+import gen.asm.*;
 
 /**
  * A visitor that produces code for a function declaration
+ *
+ *
+ * Calling convention -
+ *
+ *  before calling
+ *  
+ *  leave space for arguments + 4 for return address
+ *  put onto stack
+ *
+ *  stack on call:
+ *  -return value
+ *  -arguments
+ *  -return address (essentially first argument) //TODO: ast pass to make it into arguments
+ *  
+ *  actually return value can be anywhere
+ *  
+ *  after call:
+ *  
+ *  push fp
+ *  fp = sp
+ *  leave space for locals //TODO: collect locals
+ *  pushregs
+ *  
+ *
+ *  ...
+ *
+ *  popregs
+ *  remove space for locals
+ *  pop fp
+ *  
  */
-public class FunGen implements ASTVisitor<Void> {
+public class FunGen extends BaseGen<Void> {
 
     private AssemblyProgram asmProg;
+    private AssemblyProgram.Section section;
+
+    private int offsetCounter;
 
     public FunGen(AssemblyProgram asmProg) {
         this.asmProg = asmProg;
+        this.offsetCounter = 0;
     }
 
     @Override
@@ -26,40 +60,252 @@ public class FunGen implements ASTVisitor<Void> {
 
     @Override
     public Void visitBlock(Block b) {
-        // TODO: to complete
+
+        if(b.vars.size()!=0){
+            throw new ShouldNotReach();//should have been cleared out by ast rebuilder
+        }
+        
+        for(Stmt s: b.statements) {
+            s.accept(this);
+        }
+        
         return null;
+    }
+
+    private void emitEpilogue(){
+        section.emitStore("lw", Register.Arch.ra, Register.Arch.sp, 0);
+        section.emit("addi", Register.Arch.sp, Register.Arch.sp, 4);
+        section.emit(AssemblyItem.Instruction.popRegisters);
+        section.emit("addi", Register.Arch.sp, Register.Arch.sp, offsetCounter); //delete locals
+        section.emitLoad("lw", Register.Arch.fp, Register.Arch.sp, -4);//restore fp
+        section.emitJr("jr", Register.Arch.ra);//return
+    }
+
+    public static int findArgumentOffsets(FunDecl decl){
+        //return value should have been dealt with by an AST visitor
+        int argOffsetCounter = 0; //0 is original fp
+        for(VarDecl vd: decl.params){
+            argOffsetCounter -= ((vd.type.bytes()-1)/4+1)*4; //go back enough to fit this argument
+            vd.memory = new VarDecl.Memory(argOffsetCounter);
+        }
+        return -argOffsetCounter;
+    }
+
+    private void visitFunctionBlock(Block b){
+        // TODO: to complete:
+        // 1) emit the prolog
+
+        //push fp
+        section.emitStore("sw", Register.Arch.fp, Register.Arch.sp, -4);
+
+        //fp = sp
+        section.emit("subi", Register.Arch.fp, Register.Arch.sp, 4);
+
+        offsetCounter = 4; //fp + 0 is original fp, so fp + 4 is first local
+
+        for(VarDecl vd: b.vars){
+            vd.accept(this); //increments offset counter by word-aligned sizeof(vd)
+        }
+
+        //space on the stack for variables:
+        section.emit("subi", Register.Arch.sp, Register.Arch.sp, offsetCounter);
+
+        //pushregs
+        section.emit(AssemblyItem.Instruction.pushRegisters);
+        section.emitStore("sw", Register.Arch.ra, Register.Arch.sp, -4);
+        section.emit("subi", Register.Arch.sp, Register.Arch.sp, 4);
+
+        // 2) emit the body of the function
+        for(Stmt s: b.statements) {
+            s.accept(this);
+        }
+
+         // 3) emit the epilog
+        emitEpilogue();
+    }
+
+    private boolean emitBuiltins(String name){
+        if(name.equals("mcmalloc")){
+            section.emitStore("sw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitStore("sw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitStore("sw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitStore("sw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitLoad("lw", Register.Arch.a1, Register.Arch.sp, 0);//return value location (void**)
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, 4);//amount of memory
+
+            section.emit("subi", Register.Arch.sp, Register.Arch.sp, 16);
+
+            section.emit("addi", Register.Arch.v0, Register.Arch.zero, 9);
+
+            section.emit(AssemblyItem.Instruction.syscall);
+
+            section.emitStore("sw", Register.Arch.v0, Register.Arch.a1, 0); //a1 is return location
+
+            section.emit("addi", Register.Arch.sp, Register.Arch.sp, 16);
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitLoad("lw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitLoad("lw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitLoad("lw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitJr("jr", Register.Arch.ra);
+        }else if(name.equals("read_i")){
+            section.emitStore("sw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitStore("sw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitStore("sw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitStore("sw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, 0);
+
+            section.emit("subi", Register.Arch.sp, Register.Arch.sp, 16);
+
+            section.emit("addi", Register.Arch.v0, Register.Arch.zero, 5);
+
+            section.emit(AssemblyItem.Instruction.syscall);
+
+            section.emitStore("sw", Register.Arch.v0, Register.Arch.a0, 0); //a0 is return location
+
+            section.emit("addi", Register.Arch.sp, Register.Arch.sp, 16);
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitLoad("lw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitLoad("lw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitLoad("lw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitJr("jr", Register.Arch.ra);
+        }else if(name.equals("read_c")){
+            section.emitStore("sw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitStore("sw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitStore("sw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitStore("sw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, 0);
+
+            section.emit("subi", Register.Arch.sp, Register.Arch.sp, 16);
+
+            section.emit("addi", Register.Arch.v0, Register.Arch.zero, 12);
+
+            section.emit(AssemblyItem.Instruction.syscall);
+
+            section.emitStore("sw", Register.Arch.v0, Register.Arch.a0, 0); //a0 is return location
+
+            section.emit("addi", Register.Arch.sp, Register.Arch.sp, 16);
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitLoad("lw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitLoad("lw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitLoad("lw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitJr("jr", Register.Arch.ra);
+        }else if(name.equals("print_i")){
+            section.emitStore("sw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitStore("sw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitStore("sw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitStore("sw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, 0);
+
+            section.emit("subi", Register.Arch.sp, Register.Arch.sp, 16);
+
+            section.emit("addi", Register.Arch.v0, Register.Arch.zero, 1);
+
+            section.emit(AssemblyItem.Instruction.syscall);
+
+            section.emit("addi", Register.Arch.sp, Register.Arch.sp, 16);
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitLoad("lw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitLoad("lw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitLoad("lw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitJr("jr", Register.Arch.ra);
+        }else if(name.equals("print_c")){
+            section.emitStore("sw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitStore("sw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitStore("sw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitStore("sw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, 0);
+
+            section.emit("subi", Register.Arch.sp, Register.Arch.sp, 16);
+
+            section.emit("addi", Register.Arch.v0, Register.Arch.zero, 11);
+
+            section.emit(AssemblyItem.Instruction.syscall);
+
+            section.emit("addi", Register.Arch.sp, Register.Arch.sp, 16);
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitLoad("lw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitLoad("lw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitLoad("lw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitJr("jr", Register.Arch.ra);
+        }else if(name.equals("print_s")){
+            section.emitStore("sw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitStore("sw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitStore("sw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitStore("sw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, 0);
+
+            section.emit("subi", Register.Arch.sp, Register.Arch.sp, 16);
+
+            section.emit("addi", Register.Arch.v0, Register.Arch.zero, 4);
+
+            section.emit(AssemblyItem.Instruction.syscall);
+
+            section.emit("addi", Register.Arch.sp, Register.Arch.sp, 16);
+            section.emitLoad("lw", Register.Arch.a0, Register.Arch.sp, -4);
+            section.emitLoad("lw", Register.Arch.a1, Register.Arch.sp, -8);
+            section.emitLoad("lw", Register.Arch.a2, Register.Arch.sp, -12);
+            section.emitLoad("lw", Register.Arch.v0, Register.Arch.sp, -16);
+
+            section.emitJr("jr", Register.Arch.ra);
+        }else{
+            return false;
+        }
+        return true;
     }
 
     @Override
     public Void visitFunDecl(FunDecl p) {
+        //System.out.println("funDecl("+p.name+")");
 
         // Each function should be produced in its own section.
         // This is is necessary for the register allocator.
-        asmProg.newSection(AssemblyProgram.Section.Type.TEXT);
+        section = asmProg.newSection(AssemblyProgram.Section.Type.TEXT);
+        p.label = new AssemblyItem.Label(p.name);
+        section.emit(p.label);
 
-        // TODO: to complete:
-        // 1) emit the prolog
-        // 2) emit the body of the function
-        // 3) emit the epilog
+        if(!emitBuiltins(p.name)){
+            findArgumentOffsets(p);
+            visitFunctionBlock(p.block);
+        }
 
         return null;
-    }
-
-    @Override
-    public Void visitProgram(Program p) {
-        throw new ShouldNotReach();
     }
 
     @Override
     public Void visitVarDecl(VarDecl vd) {
-        // TODO: should allocate local variables on the stack and remember the offset from the frame pointer where they are stored (e.g. in the VarDecl AST node)
+
+        vd.memory = new VarDecl.Memory(offsetCounter);
+        offsetCounter += ((vd.type.bytes()-1)/4+1)*4;
+
         return null;
     }
 
     @Override
-    public Void visitVarExpr(VarExpr v) {
-        // expression should be visited with the ExprGen when they appear in a statement (e.g. If, While, Assign ...)
-        throw new ShouldNotReach();
+    public Void visitExprStmt(ExprStmt es) {
+        es.expr.accept(new ExprGen(asmProg, section));
+        return null;
+    }
+
+    @Override
+    public Void visitReturn(Return ret){
+        if(ret.value != null){
+            throw new ShouldNotReach(); //should be turned into assignment by an ast pass
+        }
+
+        emitEpilogue();
+        section.emitJr("jr", Register.Arch.ra);
+        return null;
     }
 
     // TODO: to complete (should only deal with statements, expressions should be handled by the ExprGen or AddrGen)

@@ -140,13 +140,14 @@ public class Tokeniser {
             c = scanner.next();
             while(c!='\''){
                 if( c == '\\'){
+                    sb.append(c);
                     c = scanner.next(); //this one is allowed to be ' without terminating the literal
                     char unescaped = resolveEscape(c);
                     if(unescaped == 'n'){ //not a valid escape sequence
                         error(c, line, column);
                         return new Token(TokenClass.INVALID, line, column);
                     }
-                    sb.append(unescaped); 
+                    sb.append(c); 
                 }else{
                     sb.append(c);
                 }
@@ -170,7 +171,8 @@ public class Tokeniser {
                         error(c, line, column);
                         return new Token(TokenClass.INVALID, line, column);
                     }
-                    sb.append(unescaped);
+                    sb.append('\\');
+                    sb.append(c);
                 }else{
                     sb.append(c);
                 }

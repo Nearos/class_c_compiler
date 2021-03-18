@@ -16,4 +16,8 @@ public class PointerType implements Type {
     public boolean equals(Type other){
         return other instanceof PointerType && ((PointerType)other).type != null && ((PointerType)other).type.equals(type);
     }
+
+    public int bytes(){
+        return 4;
+    }
 }

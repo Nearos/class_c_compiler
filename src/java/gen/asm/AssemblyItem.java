@@ -46,6 +46,36 @@ public abstract class AssemblyItem {
                 return super.toString()+" "+size;
             }
         }
+
+        static public class Ascii extends Directive {
+            private final String literal;
+
+            public Ascii(String literal, boolean nulled){
+                super("ascii"+(nulled?"z":""));
+                this.literal = literal;
+            }
+
+            public Ascii(String literal){
+                this(literal, true);
+            }
+
+            public String toString() {
+                return super.toString()+" \""+literal+"\"";
+            }
+        }
+
+        static public final class Globl extends Directive {
+            private final String label;
+
+            public Globl(String label){
+                super("globl");
+                this.label = label;
+            }
+
+            public String toString() {
+                return super.toString()+" "+label;
+            }
+        }
     }
 
     public abstract static class Instruction extends AssemblyItem {
@@ -106,6 +136,31 @@ public abstract class AssemblyItem {
             }
         };
 
+        public static final Instruction syscall = new Instruction("syscall"){
+
+            @Override
+            public Register def() {
+                return Register.Arch.v0; //usually returns v0
+            }
+
+            @Override
+            public List<Register> uses() {
+                Register[] u = {Register.Arch.v0};
+                return Arrays.asList(u);
+            }
+
+            @Override
+            public gen.asm.AssemblyItem.Instruction rebuild(Map<Register, Register> regMap) {
+                //since arch registers are specified, I'm not sure how this will work
+                return this;
+            }
+
+            @Override
+            public String toString() {
+                return opcode;
+            }
+        };
+
 
         /**
          * @return register that this instructions modifies (if none, returns null)
@@ -138,6 +193,62 @@ public abstract class AssemblyItem {
             v.visitInstruction(this);
         }
 
+        //jump, jal
+        public static class Jump extends Instruction {
+            public final Label label;
+
+            public Jump(String opcode, Label label){
+                super(opcode);
+                this.label=label;
+            }
+
+            public String toString() {
+                return opcode
+                +
+                " "
+                +
+                label.toString();
+            }
+
+            public Register def(){
+                return null; //not sure
+            }
+
+            public List<Register> uses(){
+                return new LinkedList<>(); //not sure again
+            }
+
+            public Jump rebuild(Map<Register,Register> regMap) {
+                return this;
+            }
+        }
+
+        //jr, jalr
+        public static class Jr extends Instruction{
+            public final Register dst;
+
+            public Jr(String opcode, Register dst){
+                super(opcode);
+                this.dst = dst;
+            }
+
+            public String toString() {
+                return opcode+" "+dst.toString();
+            }
+
+            public Register def(){
+                return null; //not sure
+            }
+
+            public List<Register> uses(){
+                Register[] u = {dst};
+                return Arrays.asList(u);
+            }
+
+            public Jr rebuild(Map<Register,Register> regMap) {
+                return this;
+            }
+        }
 
         public static class RInstruction extends Instruction {
             public final Register dst;
@@ -243,12 +354,16 @@ public abstract class AssemblyItem {
         public abstract static class MemIndirect extends Instruction {
             public final Register op1;
             public final Register op2;
-            public final int imm;
-            public MemIndirect(String opcode, Register op1, Register op2, int imm) {
+            public int imm;
+
+            public final boolean addSavedRegOffset;
+
+            public MemIndirect(String opcode, Register op1, Register op2, int imm, boolean aofpr) {
                 super(opcode);
                 this.op1 = op1;
                 this.op2 = op2;
                 this.imm = imm;
+                this.addSavedRegOffset = aofpr;
             }
 
             public String toString() {
@@ -258,7 +373,10 @@ public abstract class AssemblyItem {
 
         public static class Store extends MemIndirect {
             public Store(String opcode, Register op1, Register op2, int imm) {
-                super(opcode, op1, op2, imm);
+                this(opcode, op1, op2, imm, false);
+            }
+            public Store(String opcode, Register op1, Register op2, int imm, boolean addSavedRegOffset){
+                super(opcode, op1, op2, imm, addSavedRegOffset);
             }
             public Store rebuild(Map<Register,Register> regMap) {
                 return new Store(opcode, regMap.getOrDefault(op1, op1),regMap.getOrDefault(op2, op2), imm);
@@ -275,7 +393,10 @@ public abstract class AssemblyItem {
 
         public static class Load extends MemIndirect {
             public Load(String opcode, Register op1, Register op2, int imm) {
-                super(opcode, op1, op2, imm);
+                this(opcode, op1, op2, imm, false);
+            }
+            public Load(String opcode, Register op1, Register op2, int imm, boolean addSavedRegOffset){
+                super(opcode, op1, op2, imm, addSavedRegOffset);
             }
             public Store rebuild(Map<Register,Register> regMap) {
                 return new Store(opcode, regMap.getOrDefault(op1, op1),regMap.getOrDefault(op2, op2), imm);
@@ -327,6 +448,7 @@ public abstract class AssemblyItem {
     }
 
     public static class Label extends AssemblyItem {
+        private static Label mainLabel = null;
         private static int cnt = 0;
         private final int id = cnt++;
         private final String name;
@@ -335,6 +457,11 @@ public abstract class AssemblyItem {
         }
         public Label(String name) {
             this.name = name;
+
+            //TODO: add semantic pass to ensure only 1 main
+            if(name.equals("main")){
+                mainLabel = this;
+            }
         }
 
         public String toString() {
@@ -344,6 +471,19 @@ public abstract class AssemblyItem {
         public void accept(AssemblyItemVisitor v) {
             v.visitLabel(this);
         }
+
+        //returns the label generated from a c program's main function. 
+        // This is not the label of the main funtion of the assembly program, it will be wrapped
+        public static Label getMainLabel(){
+            return mainLabel;
+        }
+
+        public static final Label main = new Label(){
+            @Override
+            public String toString() {
+                return "main";
+            }
+        };
 
     }
 }

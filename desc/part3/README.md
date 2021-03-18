@@ -80,7 +80,8 @@ As seen during the lecture, in the case of structures, you should make sure all 
 
 Next you should add support for struct and array accesses.
 This can be implemented using the `lw` and `sw` instructions for struct and a combination of `add` instruction with the `lw` and `sw` instructions for array accesses.
-The idea is to get the address of an array into a register, then add to it the index (keeping in mind that addresses are expressed in byte, so an access to `a[x]` where a is an int array means an offset of x*4 from the base address where the array is stored).
+
+The idea is to get the address of an array into a register, then add to it the index (keeping in mind that addresses are expressed in byte, so an access to `a[x]` where a is an int array means an offset of `x*4` from the base address where the array is stored).
 
 As part of this step, we also suggest that you implement assignments.
 As seen in the lecture, in the case of a `struct`, we highly encourage you to rewrite the AST before reaching the code generator to "inline" the assignment of each field.

@@ -18,4 +18,8 @@ public class ArrayType implements Type {
     public boolean equals(Type other){
         return other instanceof ArrayType && ((ArrayType)other).element.equals(element) && ((ArrayType)other).size == size;
     }
+
+    public int bytes(){
+        return size*element.bytes();
+    }
 }

@@ -140,7 +140,7 @@ public class NaiveRegAlloc {
                                         newSection.emitLA(Register.Arch.t1, l);
                                         newSection.emitStore("sw", Register.Arch.t0, Register.Arch.t1, 0);
                                     }
-                                } else
+                                }else
                                     emitInstructionWithoutVirtualRegister(insn, vrMap, newSection);
                             }
                         }));

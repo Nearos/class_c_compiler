@@ -53,6 +53,17 @@ public class AssemblyProgram {
             items.add(new AssemblyItem.Instruction.Store(opcode, val, addr, imm));
         }
 
+        //jump and jal
+        public void emitJump(String opcode, AssemblyItem.Label address){
+            assert this.type == Type.TEXT;
+            items.add(new AssemblyItem.Instruction.Jump(opcode, address));
+        }
+
+        //jr, jalr
+        public void emitJr(String opcode, Register dest){
+            assert this.type == Type.TEXT;
+            items.add(new AssemblyItem.Instruction.Jr(opcode, dest));
+        }
 
         public void emit(AssemblyItem.Label label){
             items.add(label);
@@ -79,18 +90,18 @@ public class AssemblyProgram {
                     item.accept(new AssemblyItemVisitor() {
 
                         public void visitComment(AssemblyItem.Comment comment) {
-                            writer.println("# "+comment);
+                            writer.println("\t\t\t\t\t\t\t# "+comment);
                         }
                         public void visitLabel(AssemblyItem.Label label) {
                             writer.println(label + ":");
                         }
 
                         public void visitDirective(AssemblyItem.Directive directive) {
-                            writer.println(directive);
+                            writer.println("\t"+directive);
                         }
 
                         public void visitInstruction(AssemblyItem.Instruction instruction) {
-                            writer.println(instruction);
+                            writer.println("\t"+instruction);
                         }
                     })
             );

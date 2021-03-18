@@ -96,9 +96,11 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
 	@Override
 	public Type visitStructType(StructType st){
-        if(structs.get(st.name)==null){
+        StructTypeDecl decl = structs.get(st.name);
+        if(decl==null){
             error("Struct "+st.name+" undefined");
         }
+        st.declaration = decl;
 		return st;
 	}
 

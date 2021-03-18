@@ -1,12 +1,14 @@
 package ast;
 
 import java.util.List;
+import gen.asm.AssemblyItem;
 
 public class FunDecl implements ASTNode {
     public final Type type;
     public final String name;
     public final List<VarDecl> params;
     public final Block block;
+    public AssemblyItem.Label label;
 
     public FunDecl(Type type, String name, List<VarDecl> params, Block block) {
 	    this.type = type;

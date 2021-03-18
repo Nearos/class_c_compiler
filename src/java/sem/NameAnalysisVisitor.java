@@ -182,7 +182,6 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
     @Override
     public Void visitFieldAccessExpr(FieldAccessExpr e){
     	e.object.accept(this);
-        //TODO:
     	return null;
     }
 
