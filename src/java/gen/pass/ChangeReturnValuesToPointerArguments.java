@@ -13,10 +13,14 @@ public class ChangeReturnValuesToPointerArguments extends BaseASTPass {
 
     @Override
     public ASTNode visitFunDecl(FunDecl p){
+        extraLocals = new LinkedList<>();
         Type returnType = (Type) p.type.accept(this);
 
         if(returnType.equals(BaseType.VOID)){
-            return super.visitFunDecl(p);
+            FunDecl ret = (FunDecl) super.visitFunDecl(p);
+            extraLocals.addAll(ret.block.vars);
+            ret.block = new Block(extraLocals, ret.block.statements);
+            return ret;
         }
         p.modified = true;
 
@@ -36,7 +40,10 @@ public class ChangeReturnValuesToPointerArguments extends BaseASTPass {
             args, 
             null);
         p.map = ret;
-        ret.block = (Block) p.block.accept(this);
+        
+        Block temp = (Block) p.block.accept(this);
+        extraLocals.addAll(temp.vars);
+        ret.block = new Block(extraLocals, temp.statements);
         return ret;
     }
 
@@ -60,8 +67,6 @@ public class ChangeReturnValuesToPointerArguments extends BaseASTPass {
         List<VarDecl> vars = new LinkedList<>();
         List<Stmt> statements = new LinkedList<>();
 
-        extraLocals = new LinkedList<>();
-
         for(VarDecl i: b.vars){
             vars.add((VarDecl)i.accept(this));
         }
@@ -75,7 +80,6 @@ public class ChangeReturnValuesToPointerArguments extends BaseASTPass {
                 statements.add(newStmt);
             }
         }
-        vars.addAll(extraLocals);
         return new Block(vars, statements);
     }
 
