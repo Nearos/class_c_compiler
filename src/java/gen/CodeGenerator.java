@@ -19,6 +19,7 @@ public class CodeGenerator {
             .accept(new pass.BaseASTPass()) //For testing; does nothing but duplicate tree
             .accept(new pass.BlockStatements())
             .accept(new pass.ChangeReturnValuesToPointerArguments())
+            .accept(new pass.HandleStructArgs())
             .accept(new pass.ChangeStructAssignmentsToFieldAssignments())
             .accept(new pass.MoveLocalVariablesToFunctionBlock())
             ;

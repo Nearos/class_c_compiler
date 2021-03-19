@@ -60,11 +60,15 @@ public class ChangeStructAssignmentsToFieldAssignments extends BaseASTPass {
                 addType(structType, new ValueAtExpr(rAddrUse)), 
                 vd.varName);
             fieldExpr.type = vd.type;
-            extras.add(new Assign(
+            Stmt replacement = (Stmt) new Assign(
                 new FieldAccessExpr(
                     addType(structType, new ValueAtExpr(lAddrUse)), 
                     vd.varName), 
-                fieldExpr));
+                fieldExpr).accept(this);
+
+            if(replacement != null){
+                extras.add(replacement);
+            }
         }
 
         return null;

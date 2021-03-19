@@ -47,6 +47,10 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 	@Override
 	public Type visitFunDecl(FunDecl p) {
         currentReturnType = p.type;
+        p.type.accept(this);
+        for(VarDecl i: p.params){
+            i.accept(this);
+        }
 		p.block.accept(this);
         currentReturnType = null;
 		return null;
@@ -210,11 +214,17 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
         }
         StructType structType = (StructType)st;
         StructTypeDecl std = structs.get(structType.name);
+        structType.declaration = std;
         if(std == null){
             error("Cannot access field of struct "+structType.name+ "; it does not exist.");
             return null;
         }
-        VarDecl decl = std.scope.lookupCurrent(e.name).getVar();
+        Symbol sym = std.scope.lookupCurrent(e.name);
+        if(sym == null){
+            error("Struct "+structType.name+" has no field called "+e.name);
+            return null;
+        }
+        VarDecl decl = sym.getVar();
         if(decl == null){
             error("Struct "+structType.name+" has no field called "+e.name);
             return null;

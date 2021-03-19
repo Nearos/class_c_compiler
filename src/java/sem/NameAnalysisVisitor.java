@@ -23,7 +23,7 @@ public class NameAnalysisVisitor extends BaseSemanticVisitor<Void> {
         for(VarDecl i: sts.fields){
             i.accept(this);
         }
-
+        
         sts.scope = scope; //associate struct with scope
         scope = oldScope;
 
