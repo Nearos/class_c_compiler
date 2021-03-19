@@ -290,5 +290,13 @@ public class ExprGen extends BaseGen<Register> {
         return ret;
     }
 
+    @Override
+    public Register visitSizeOfExpr(SizeOfExpr e){
+        Register ret = new Register.Virtual();
+
+        asmSection.emit("addi", ret, Register.Arch.zero, e.type.bytes());
+        return ret;
+    }
+
     // TODO: to complete (only deal with Expression nodes, anything else should throw ShouldNotReach)
 }

@@ -289,7 +289,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
     @Override
     public Type visitSizeOfExpr(SizeOfExpr e){
-        return e.type;
+        return BaseType.INT;
     }
 
     @Override
