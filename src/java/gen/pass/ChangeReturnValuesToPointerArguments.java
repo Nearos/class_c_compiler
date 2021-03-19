@@ -96,7 +96,7 @@ public class ChangeReturnValuesToPointerArguments extends BaseASTPass {
         List<Expr> args = new LinkedList<>();
 
         //create a variable to hold return value named ""
-        VarDecl returnValueVar = new VarDecl(e.fd.map.params.get(0).type, "");
+        VarDecl returnValueVar = new VarDecl(((PointerType)e.fd.map.params.get(0).type).type, "");
         extraLocals.add(returnValueVar);
 
         //create an expression which takes the address of the variable and add it to the arguments of the function
