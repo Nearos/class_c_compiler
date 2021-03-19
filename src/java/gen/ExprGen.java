@@ -64,7 +64,7 @@ public class ExprGen extends BaseGen<Register> {
         literalData.emit(label);
         literalData.emit(new AssemblyItem.Directive.Ascii(sl.value));
 
-        literalData.emit(new AssemblyItem.Directive.Space(4-(sl.length() % 4)));
+        literalData.emit(new AssemblyItem.Directive.Space(4-((sl.length()+1) % 4)));
 
         Register ret = new Register.Virtual();
         asmSection.emitLA(ret, label);

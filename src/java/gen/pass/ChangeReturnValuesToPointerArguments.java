@@ -70,6 +70,7 @@ public class ChangeReturnValuesToPointerArguments extends BaseASTPass {
         for(VarDecl i: b.vars){
             vars.add((VarDecl)i.accept(this));
         }
+        List<Stmt> oldExtras = extras;
         extras = new LinkedList<>();
         for(Stmt i: b.statements){
              //empty list of extra statements needed to replace the current one
@@ -80,11 +81,13 @@ public class ChangeReturnValuesToPointerArguments extends BaseASTPass {
                 statements.add(newStmt);
             }
         }
+        extras = oldExtras;
         return new Block(vars, statements);
     }
 
     @Override
     public ASTNode visitFunCallExpr(FunCallExpr e){
+        //TODO! Fix!
         if(e.type.equals(BaseType.VOID)){
             //function was not modified
             return super.visitFunCallExpr(e);
