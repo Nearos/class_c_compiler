@@ -24,7 +24,7 @@ public class AddrGen extends BaseGen<Register> {
         Register ret = new Register.Virtual();
 
         if(v.vd.memory.label == null){ //stack variable
-            asmSection.emitLoad("addi", ret, Register.Arch.fp, -v.vd.memory.stackOffset);
+            asmSection.emit("addi", ret, Register.Arch.fp, -v.vd.memory.stackOffset);
         }else{ //global variable
             asmSection.emitLA(ret, v.vd.memory.label);
         }
@@ -32,6 +32,45 @@ public class AddrGen extends BaseGen<Register> {
         return ret;
     }
 
+    @Override
+    public Register visitArrayAccessExpr(ArrayAccessExpr e){
+        Register ret = new Register.Virtual();
+        Register array = e.array.accept(new ExprGen(asmProg, asmSection));
+        Register index = e.index.accept(new ExprGen(asmProg, asmSection));
+
+        Type elemType = null;
+
+        if(e.array.type instanceof ArrayType){
+            elemType = ((ArrayType)e.array.type).element;
+        }else{
+            elemType = ((PointerType)e.array.type).type;
+        }
+
+        if(!elemType.equals(BaseType.CHAR)){
+            Register four = new Register.Virtual();
+            asmSection.emit("addi", four, Register.Arch.zero, elemType.bytes());
+            asmSection.emit("mult", index, four);
+            asmSection.emit("mflo", index);
+        }
+
+        asmSection.emit("add", ret, array, index);
+        return ret;
+    }
+
+    @Override
+    public Register visitFieldAccessExpr(FieldAccessExpr e){
+        Register structAddr = e.object.accept(this);
+        int fieldOffset = ((StructType)((Expr) e.object).type).getFieldOffset(e.name);
+        Register ret = new Register.Virtual();
+
+        asmSection.emit("addi", ret, structAddr, fieldOffset);
+        return ret;
+    }
+
+    @Override
+    public Register visitValueAtExpr(ValueAtExpr e){
+        return e.expr.accept(new ExprGen(asmProg, asmSection));
+    }
     // TODO: to complete (only deal with Expression nodes, anything else should throw ShouldNotReach)
 
 }

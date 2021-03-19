@@ -138,6 +138,7 @@ public class Tokeniser {
             StringBuilder sb =  new StringBuilder();
 
             c = scanner.next();
+            int read = 0;
             while(c!='\''){
                 if( c == '\\'){
                     sb.append(c);
@@ -152,10 +153,11 @@ public class Tokeniser {
                     sb.append(c);
                 }
                 c = scanner.next();
+                read++;
             }
             String theCharacter = sb.toString();
 
-            if(theCharacter.length()==1)
+            if(read==1)
                 return new Token(TokenClass.CHAR_LITERAL, theCharacter, line, column);
         }
 

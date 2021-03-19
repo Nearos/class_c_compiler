@@ -28,6 +28,16 @@ public class AssemblyProgram {
             items.add(new AssemblyItem.Instruction.RInstruction(opcode, dst, src1, src2));
         }
 
+        public void emit(String opcode, Register src1, Register src2) {
+            assert this.type == Type.TEXT;
+            items.add(new AssemblyItem.Instruction.A2Instruction(opcode, src1, src2));
+        }
+
+        public void emit(String opcode, Register src1) {
+            assert this.type == Type.TEXT;
+            items.add(new AssemblyItem.Instruction.A1Instruction(opcode, src1));
+        }
+
         public void emit(String opcode, Register src1, Register src2, AssemblyItem.Label label) {
             assert this.type == Type.TEXT;
             items.add(new AssemblyItem.Instruction.Branch(opcode, src1, src2, label));

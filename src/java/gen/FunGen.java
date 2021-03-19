@@ -66,6 +66,14 @@ public class FunGen extends BaseGen<Void> {
         }
         
         for(Stmt s: b.statements) {
+            String astCode = ASTPrinter.printNode(s);
+            int newlineI = astCode.indexOf('\n');
+            if(newlineI > 0){
+                astCode = astCode.substring(0, newlineI);
+            }
+
+            section.emit("AST code: " + astCode);
+
             s.accept(this);
         }
         
@@ -83,12 +91,12 @@ public class FunGen extends BaseGen<Void> {
 
     public static int findArgumentOffsets(FunDecl decl){
         //return value should have been dealt with by an AST visitor
-        int argOffsetCounter = 0; //0 is original fp
+        int argOffsetCounter = -4; //0 is original fp
         for(VarDecl vd: decl.params){
-            argOffsetCounter -= ((vd.type.bytes()-1)/4+1)*4; //go back enough to fit this argument
             vd.memory = new VarDecl.Memory(argOffsetCounter);
+            argOffsetCounter -= ((vd.type.bytes()-1)/4+1)*4; //go back enough to fit this argument
         }
-        return -argOffsetCounter;
+        return -argOffsetCounter+4;
     }
 
     private void visitFunctionBlock(Block b){
@@ -117,6 +125,13 @@ public class FunGen extends BaseGen<Void> {
 
         // 2) emit the body of the function
         for(Stmt s: b.statements) {
+            String astCode = ASTPrinter.printNode(s);
+            int newlineI = astCode.indexOf('\n');
+            if(newlineI > 0){
+                astCode = astCode.substring(0, newlineI);
+            }
+
+            section.emit("AST code: " + astCode);
             s.accept(this);
         }
 
@@ -266,11 +281,19 @@ public class FunGen extends BaseGen<Void> {
 
     @Override
     public Void visitFunDecl(FunDecl p) {
-        //System.out.println("funDecl("+p.name+")");
+        section = asmProg.newSection(AssemblyProgram.Section.Type.TEXT);
+
+        String astCode = ASTPrinter.printNode(p);
+        int newlineI = astCode.indexOf('\n');
+        if(newlineI > 0){
+            astCode = astCode.substring(0, newlineI);
+        }
+
+        section.emit("AST code: " + astCode);
 
         // Each function should be produced in its own section.
         // This is is necessary for the register allocator.
-        section = asmProg.newSection(AssemblyProgram.Section.Type.TEXT);
+       
         p.label = new AssemblyItem.Label(p.name);
         section.emit(p.label);
 
@@ -285,9 +308,9 @@ public class FunGen extends BaseGen<Void> {
     @Override
     public Void visitVarDecl(VarDecl vd) {
 
-        vd.memory = new VarDecl.Memory(offsetCounter);
         offsetCounter += ((vd.type.bytes()-1)/4+1)*4;
-
+        vd.memory = new VarDecl.Memory(offsetCounter);
+        
         return null;
     }
 
@@ -305,6 +328,59 @@ public class FunGen extends BaseGen<Void> {
 
         emitEpilogue();
         section.emitJr("jr", Register.Arch.ra);
+        return null;
+    }
+
+    @Override
+    public Void visitAssign(Assign a){
+        Register laddr = a.lvalue.accept(new AddrGen(asmProg, section));
+        Register rvalue = a.rvalue.accept(new ExprGen(asmProg, section));
+
+        String storeInstruction = "sw";
+
+        if(a.rvalue.type.equals(BaseType.CHAR)){
+            storeInstruction = "sb";
+        }
+
+        section.emitStore(storeInstruction, rvalue, laddr, 0);
+        return null;
+    }
+
+    @Override
+    public Void visitIf(If ifs){
+        Register cond = ifs.condition.accept(new ExprGen(asmProg, section));
+        AssemblyItem.Label ifend = new AssemblyItem.Label("ifend");
+        AssemblyItem.Label end = null;
+
+        section.emit("beq", cond, Register.Arch.zero, ifend);
+
+        ifs.consequent.accept(this);
+        if(ifs.alternative!=null){
+            end = new AssemblyItem.Label("end");
+            section.emitJump("j", end);
+        }
+        section.emit(ifend);
+        if(ifs.alternative!=null){
+            ifs.alternative.accept(this);
+            section.emit(end);
+        }
+        return null;
+    }
+
+    @Override
+    public Void visitWhile(While we){
+        AssemblyItem.Label top = new AssemblyItem.Label("top");
+        AssemblyItem.Label end = new AssemblyItem.Label("end");
+
+        section.emit(top);
+        Register condRes = we.condition.accept(new ExprGen(asmProg, section));
+        section.emit("beq", condRes, Register.Arch.zero, end);
+
+        we.stmt.accept(this);
+
+        section.emitJump("j", top);
+        section.emit(end);
+
         return null;
     }
 

@@ -18,9 +18,22 @@ public class ExprGen extends BaseGen<Register> {
     }
 
     @Override
-    public Register visitVarExpr(VarExpr v) { //all var exprs should be basic types at this point
+    public Register visitVarExpr(VarExpr v) { 
         Register ret = new Register.Virtual();
         String loadOp;
+
+        if(v.vd.type instanceof ArrayType){
+            //should return pointer as register
+            if(v.vd.memory.label == null){ //stack variable
+                int offset = v.vd.memory.stackOffset; 
+
+                asmSection.emit("addi", ret, Register.Arch.fp, 0);
+                asmSection.emit("subi", ret, ret, offset);
+            }else{ //global variable
+                asmSection.emitLA(ret, v.vd.memory.label);
+            }
+            return ret;
+        }
 
         switch(v.vd.type.bytes()){
         case 1:
@@ -57,6 +70,20 @@ public class ExprGen extends BaseGen<Register> {
         return ret;
     }
 
+    @Override
+    public Register visitIntLiteral(IntLiteral lit){
+        Register ret = new Register.Virtual();
+        asmSection.emit("addi", ret, Register.Arch.zero, lit.value);
+        return ret;
+    }
+
+    @Override
+    public Register visitChrLiteral(ChrLiteral lit){
+        Register ret = new Register.Virtual();
+        asmSection.emit("addi", ret, Register.Arch.zero, (int)lit.value);
+        return ret;
+    }
+
     //No longer acts as an expression; any return value has been made into a pointer
     @Override
     public Register visitFunCallExpr(FunCallExpr f){
@@ -84,6 +111,183 @@ public class ExprGen extends BaseGen<Register> {
     @Override
     public Register visitTypecastExpr(TypecastExpr expr){
         return expr.expr.accept(this);
+    }
+
+    @Override
+    public Register visitAddressOfExpr(AddressOfExpr e){
+        return e.expr.accept(new AddrGen(asmProg, asmSection));
+    }
+
+    @Override 
+    public Register visitBinOp(BinOp bop){
+        Register ret = new Register.Virtual();
+        Register lhs = bop.lhs.accept(this);
+
+        switch(bop.op){
+            case ADD:
+            {
+                Register rhs = bop.rhs.accept(this);
+                asmSection.emit("add", ret, lhs, rhs);
+            }
+            break;
+            case SUB:
+            {
+                Register rhs = bop.rhs.accept(this);
+                asmSection.emit("sub", ret, lhs, rhs);
+            }
+            break;
+            case MUL:
+            {
+                Register rhs = bop.rhs.accept(this);
+                asmSection.emit("mult", lhs, rhs);
+                asmSection.emit("mflo", ret);
+            }
+            break;
+            case DIV:
+            {
+                Register rhs = bop.rhs.accept(this);
+                asmSection.emit("div", lhs, rhs);
+                asmSection.emit("mflo", ret);
+            }
+            break;
+            case MOD:
+            {
+                Register rhs = bop.rhs.accept(this);
+                asmSection.emit("div", lhs, rhs);
+                asmSection.emit("mfhi", ret);
+            }
+            break;
+            case GT:
+            {
+                Register rhs = bop.rhs.accept(this);
+                asmSection.emit("slt", ret, rhs, lhs);
+            }
+            break;
+            case LT:
+            {
+                Register rhs = bop.rhs.accept(this);
+                asmSection.emit("slt", ret, lhs, rhs);
+            }
+            break;
+            case GE:
+            {
+                Register rhs = bop.rhs.accept(this);
+                asmSection.emit("slt", ret, lhs, rhs);
+                asmSection.emit("xori", ret, ret, 1);
+            }
+            break;
+            case LE:
+            {
+                Register rhs = bop.rhs.accept(this);
+                asmSection.emit("slt", ret, rhs, lhs);
+                asmSection.emit("xori", ret, ret, 1);
+            }
+            break;
+            case EQ:
+            {
+                Register rhs = bop.rhs.accept(this);
+                asmSection.emit("xor", ret, lhs, rhs);
+                Register one = new Register.Virtual();
+                asmSection.emit("addi", one, Register.Arch.zero, 1);
+                asmSection.emit("sltu", ret, ret, one);
+            }
+            break;
+            case NE:
+            {
+                Register rhs = bop.rhs.accept(this);
+                asmSection.emit("xor", ret, lhs, rhs);
+                asmSection.emit("sltu", ret, Register.Arch.zero, ret);
+            }
+            break;
+            case AND:
+            {
+                AssemblyItem.Label no = new AssemblyItem.Label("no");
+
+                asmSection.emit("addi", ret, Register.Arch.zero, 0); //ret = 0;
+                asmSection.emit("beq", lhs, Register.Arch.zero, no); //if lhs != 0
+
+                Register rhs = bop.rhs.accept(this);
+
+                asmSection.emit("add", ret, Register.Arch.zero, rhs); //ret = rhs
+
+                asmSection.emit(no);
+            }
+            break;
+            case OR:
+            {
+                AssemblyItem.Label no = new AssemblyItem.Label("no");
+
+                asmSection.emit("addi", ret, Register.Arch.zero, 1); //ret = 1;
+                asmSection.emit("bne", lhs, Register.Arch.zero, no); //if lsh = 0
+
+                Register rhs = bop.rhs.accept(this);   
+
+                asmSection.emit("add", ret, Register.Arch.zero, rhs); //ret = rhs
+
+                asmSection.emit(no);
+            }
+            break;
+
+        }
+
+        return ret;
+    }
+
+    @Override
+    public Register visitArrayAccessExpr(ArrayAccessExpr e){
+        Register ret = new Register.Virtual();
+        Register array = e.array.accept(new ExprGen(asmProg, asmSection));
+        Register index = e.index.accept(new ExprGen(asmProg, asmSection));
+
+        String loadI = "lb";
+
+        Type elemType = null;
+
+        if(e.array.type instanceof ArrayType){
+            elemType = ((ArrayType)e.array.type).element;
+        }else{
+            elemType = ((PointerType)e.array.type).type;
+        }
+
+        if(!elemType.equals(BaseType.CHAR)){
+            Register four = new Register.Virtual();
+            asmSection.emit("addi", four, Register.Arch.zero, elemType.bytes());
+            asmSection.emit("mult", index, four);
+            asmSection.emit("mflo", index);
+            loadI = "lw";
+        }
+
+        asmSection.emit("add", ret, array, index);
+        asmSection.emitLoad(loadI, ret, ret, 0);
+        return ret;
+    }
+
+    @Override
+    public Register visitValueAtExpr(ValueAtExpr e){
+        Register addr = e.expr.accept(this);
+        Register ret = new Register.Virtual();
+        String loadI="lw";
+        if(e.expr.type.equals(BaseType.CHAR)){
+            loadI="lb";
+        }
+        asmSection.emitLoad(loadI, ret, addr, 0);
+        return ret;
+    }
+
+    @Override
+    public Register visitFieldAccessExpr(FieldAccessExpr e){
+        Register structAddr = e.object.accept(new AddrGen(asmProg, asmSection));
+        int fieldOffset = ((StructType)((Expr) e.object).type).getFieldOffset(e.name);
+        Register ret = new Register.Virtual();
+        
+        String loadI = "lw";
+        if(e.type.equals(BaseType.CHAR)){
+            loadI="lb";
+        }
+
+        asmSection.emit("addi", ret, structAddr, fieldOffset);
+        asmSection.emitLoad(loadI, ret, ret, 0);
+        return ret;
     }
 
     // TODO: to complete (only deal with Expression nodes, anything else should throw ShouldNotReach)

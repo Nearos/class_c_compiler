@@ -14,7 +14,6 @@ public class If extends Stmt{
     }
 
     public <T> T accept(ASTVisitor<T> v){
-        //TODO
         return v.visitIf(this);
     }
 }

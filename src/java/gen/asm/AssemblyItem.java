@@ -442,6 +442,65 @@ public abstract class AssemblyItem {
             }
         }
 
+        public static class A2Instruction extends Instruction {
+            public final Register src1;
+            public final Register src2;
+
+            public A2Instruction(String opcode, Register src1, Register src2) {
+                super(opcode);
+                this.src1 = src1;
+                this.src2 = src2;
+            }
+
+            public String toString() {
+                return opcode+" "+ src1 + "," + src2;
+            }
+
+
+            public Register def() {
+                return null;
+            }
+
+
+            public List<Register> uses() {
+                Register[] uses = {src1,src2};
+                return Arrays.asList(uses);
+            }
+
+            public A2Instruction rebuild(Map<Register,Register> regMap) {
+                return new A2Instruction(opcode, regMap.getOrDefault(src1,src1),regMap.getOrDefault(src2,src2));
+            }
+
+        }
+
+        public static class A1Instruction extends Instruction {
+            public final Register src1;
+
+            public A1Instruction(String opcode, Register src1) {
+                super(opcode);
+                this.src1 = src1;
+            }
+
+            public String toString() {
+                return opcode+" "+ src1;
+            }
+
+
+            public Register def() {
+                return src1;
+            }
+
+
+            public List<Register> uses() {
+                Register[] uses = {};
+                return Arrays.asList(uses);
+            }
+
+            public A1Instruction rebuild(Map<Register,Register> regMap) {
+                return new A1Instruction(opcode, regMap.getOrDefault(src1,src1));
+            }
+
+        }
 
        // TODO: to complete
 

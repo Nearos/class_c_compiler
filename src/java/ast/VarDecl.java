@@ -6,6 +6,7 @@ public class VarDecl implements ASTNode {
     public final Type type;
     public final String varName;
     public Memory memory; //set by ProgramGen
+    public VarDecl map =null;
 
     public static class Memory {
 
@@ -27,6 +28,7 @@ public class VarDecl implements ASTNode {
 	    this.type = type;
 	    this.varName = varName;
         this.memory = null;
+        this.map = this;
     }
 
     public <T> T accept(ASTVisitor<T> v) {

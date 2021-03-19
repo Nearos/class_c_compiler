@@ -29,7 +29,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
         }else{
             structs.put(st.type.name, st);
         }
-		
+		st.type.accept(this);
 		return null;
 	}
 
@@ -85,6 +85,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
             error("Variable declaration not found");
             return null; //name analyser didn't associate with declaration
         }
+        v.type = v.vd.type;
 		return v.vd.type;
 	}
 
@@ -123,7 +124,8 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
     @Override
     public Type visitAddressOfExpr(AddressOfExpr e){
-    	return new PointerType(e.expr.accept(this));
+    	e.type =  new PointerType(e.expr.accept(this));
+        return e.type;
     }
 
     @Override
@@ -138,10 +140,12 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
         } 
         if(type instanceof ArrayType){
             ArrayType arrayType = (ArrayType)type;
-            return arrayType.element;
+            e.type = arrayType.element;
+            return e.type;
         }else if(type instanceof PointerType){
             PointerType pointerType = (PointerType)type;
-            return pointerType.type;
+            e.type = pointerType.type;
+            return e.type;
         }
         error("Cannot index type "+ASTPrinter.printNode(type)+"; must be array or pointer");
     	return null; //cannot resolve type
@@ -154,6 +158,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
         if(lhs == null || rhs == null)return null;
         if(lhs.equals(BaseType.INT)
             && rhs.equals(BaseType.INT)){
+            bop.type = BaseType.INT;
             return BaseType.INT;
         }else if(
             lhs.equals(rhs)
@@ -162,7 +167,8 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
             && !(rhs instanceof StructType) && !(rhs instanceof ArrayType) 
             && !rhs.equals(BaseType.VOID)
             && (bop.op == OP.EQ || bop.op == OP.NE)){
-            return BaseType.INT;
+            bop.type = BaseType.INT;
+            return bop.type;
         }
         error("Binary operation other than ==, != must take 2 ints. Got types "
             +ASTPrinter.printNode(lhs)
@@ -173,17 +179,20 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
     @Override
     public Type visitChrLiteral(ChrLiteral cl){
-    	return BaseType.CHAR;
+    	cl.type = BaseType.CHAR;
+        return cl.type;
     }
 
     @Override
     public Type visitIntLiteral(IntLiteral il){
-    	return BaseType.INT;
+    	il.type = BaseType.INT;
+        return il.type;
     }
 
     @Override
     public Type visitStrLiteral(StrLiteral sl){
-    	return new ArrayType(sl.value.length()+1, BaseType.CHAR);
+    	sl.type = new ArrayType(sl.value.length()+1, BaseType.CHAR);
+        return sl.type;
     }
 
     @Override
@@ -211,7 +220,8 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
             return null;
         }
 
-    	return decl.type;
+    	e.type = decl.type;
+        return e.type;
     }
 
     @Override
@@ -240,7 +250,8 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
                 return decl.type;
             }
         }
-    	return decl.type;
+    	e.type = decl.type;
+        return e.type;
     }
 
     @Override
@@ -278,7 +289,7 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
 
     @Override
     public Type visitSizeOfExpr(SizeOfExpr e){
-    	return BaseType.INT;
+        return e.type;
     }
 
     @Override
@@ -305,7 +316,8 @@ public class TypeCheckVisitor extends BaseSemanticVisitor<Type> {
         Type type = e.expr.accept(this);
     	if(type instanceof PointerType){
             PointerType pt = (PointerType)type;
-            return pt.type;
+            e.type = pt.type;
+            return e.type;
         }
         error("Cannot dereference non-pointer type " + ASTPrinter.printNode(type));
     	return null;
