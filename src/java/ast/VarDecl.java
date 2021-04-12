@@ -1,6 +1,7 @@
 package ast;
 
 import gen.asm.AssemblyItem;
+import gen.asm.Register;
 
 public class VarDecl implements ASTNode {
     public final Type type;
@@ -12,15 +13,24 @@ public class VarDecl implements ASTNode {
 
         public AssemblyItem.Label label;
         public int stackOffset;
+        public Register register;
 
         public Memory(AssemblyItem.Label label){
             this.stackOffset = -1;
             this.label = label;
+            this.register = null;
         }
 
         public Memory(int stackOffset){
             this.stackOffset = stackOffset;
             this.label = null;
+            this.register = null;
+        }
+
+        public Memory(Register register){
+            this.stackOffset = -1;
+            this.label = null;
+            this.register = register;
         }
     }
 

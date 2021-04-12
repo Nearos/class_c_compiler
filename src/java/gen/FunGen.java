@@ -309,7 +309,9 @@ public class FunGen extends BaseGen<Void> {
     public Void visitVarDecl(VarDecl vd) {
 
         offsetCounter += ((vd.type.bytes()-1)/4+1)*4;
-        vd.memory = new VarDecl.Memory(offsetCounter);
+
+        if(vd.memory == null)
+            vd.memory = new VarDecl.Memory(offsetCounter);
         
         return null;
     }
@@ -333,8 +335,18 @@ public class FunGen extends BaseGen<Void> {
 
     @Override
     public Void visitAssign(Assign a){
-        Register laddr = a.lvalue.accept(new AddrGen(asmProg, section));
+
         Register rvalue = a.rvalue.accept(new ExprGen(asmProg, section));
+
+        if(a.lvalue instanceof VarExpr){
+            VarExpr lVarExpr = (VarExpr) a.lvalue;
+            if(lVarExpr.vd.memory.register != null){
+                section.emit("addi", lVarExpr.vd.memory.register, rvalue, 0);
+                return null;
+            }
+        }
+
+        Register laddr = a.lvalue.accept(new AddrGen(asmProg, section));
 
         String storeInstruction = "sw";
 

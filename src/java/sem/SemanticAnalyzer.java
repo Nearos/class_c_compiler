@@ -18,6 +18,7 @@ public class SemanticAnalyzer {
 			add(new NameAnalysisVisitor(new Scope(null)));
 			add(new TypeCheckVisitor());
 			add(new LValueSemanticVisitor());
+			add(new PromoteToRegisterVisitor());
 			// To be completed...
 		}};
 		// Error accumulator

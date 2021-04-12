@@ -23,6 +23,10 @@ public class AddrGen extends BaseGen<Register> {
         // TODO: to complete
         Register ret = new Register.Virtual();
 
+        if(v.vd.memory.register != null){
+            throw new IllegalStateException("Trying to take address of register variable");
+        }
+
         if(v.vd.memory.label == null){ //stack variable
             asmSection.emit("addi", ret, Register.Arch.fp, -v.vd.memory.stackOffset);
         }else{ //global variable

@@ -39,6 +39,8 @@ public class LivenessGraph{
         //labels to map spilled registers to
         private final Map<Register, Label> spilledLabels;
 
+        private final List<Register> toBeSaved;
+
         
 
         public RegisterMap( Map<Register, Register> registerAllocation, 
@@ -47,6 +49,16 @@ public class LivenessGraph{
             this.registerAllocation = registerAllocation;
             this.spill = spill;
             this.spilledLabels = spilledLabels;
+
+            this.toBeSaved = new ArrayList<>();
+
+            toBeSaved.addAll(this.spill);
+            for(Register reg: this.registerAllocation.values()){
+                if(!toBeSaved.contains(reg))
+                    toBeSaved.add(reg);
+            }
+
+
         }
 
         public AssemblyProgram.Section generateDataSection(){
@@ -73,7 +85,7 @@ public class LivenessGraph{
                 ret.add(new Store("sw", tempRegister, Register.Arch.sp, 0));
             }
 
-            for(Register reg: registerAllocation.values()){
+            for(Register reg: toBeSaved){
                 // push register onto stack
                 ret.add(new IInstruction("addi", Register.Arch.sp, Register.Arch.sp, -4));
                 ret.add(new Store("sw", reg, Register.Arch.sp, 0));
@@ -84,14 +96,15 @@ public class LivenessGraph{
         public List<Instruction> genPopRegisters(){
             List<Instruction> ret = new LinkedList<>();
 
-            List<Register> allocated = new ArrayList<>(registerAllocation.values());
-            Collections.reverse(allocated);
-            for(Register reg: allocated){
+            Collections.reverse(toBeSaved);
+            for(Register reg: toBeSaved){
                 // pop register from stack
                 ret.add(new Load("lw", reg, Register.Arch.sp, 0));
                 ret.add(new IInstruction("addi", Register.Arch.sp, Register.Arch.sp, 4));
 
             }
+            
+            Collections.reverse(toBeSaved);
 
             List<Label> spilled = new ArrayList<>(spilledLabels.values());
             Collections.reverse(spilled);

@@ -19,6 +19,11 @@ public class ExprGen extends BaseGen<Register> {
 
     @Override
     public Register visitVarExpr(VarExpr v) { 
+        if(v.vd.memory.register != null){
+            return v.vd.memory.register;
+        }
+
+
         Register ret = new Register.Virtual();
         String loadOp;
 

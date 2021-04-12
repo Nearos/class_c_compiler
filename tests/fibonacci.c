@@ -24,7 +24,7 @@ void main() {
       next = c;
     else
       {
-	next = first + second;
+	next = (first + second) ;
 	first = second;
 	second = next;
       }
