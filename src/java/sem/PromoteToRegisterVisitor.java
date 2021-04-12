@@ -61,9 +61,10 @@ public class PromoteToRegisterVisitor extends BaseSemanticVisitor<Void> {
             std.accept(this);
         }
 
-        for(VarDecl vd: p.varDecls){
-            vd.accept(this);
-        }
+        //globals can't be registers
+        // for(VarDecl vd: p.varDecls){
+        //     vd.accept(this);
+        // }
 
         for(FunDecl fd: p.funDecls){
             fd.accept(this);

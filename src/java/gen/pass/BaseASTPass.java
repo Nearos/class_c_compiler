@@ -64,6 +64,7 @@ public class BaseASTPass implements ASTVisitor<ASTNode>{
             (Type) vd.type.accept(this),
             vd.varName
             );
+        ret.memory = vd.memory;
         vd.map = ret;
         return ret;
     }

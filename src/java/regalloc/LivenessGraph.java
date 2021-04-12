@@ -146,7 +146,8 @@ public class LivenessGraph{
 
                 Register out = registerAllocation.get(def);
                 if(out==null){
-                    Register spillRegister = spill.get(spillIndex++);
+                    Register spillRegister = spill.get(spillIndex);
+                    spillIndex++;
                     Register addrRegister = spill.get(spillIndex); //can overlap with others; it doesn't matter
                     //spilled: add store instruction
                     Label label = spilledLabels.get(def);
@@ -165,11 +166,12 @@ public class LivenessGraph{
 
                 Register out = registerAllocation.get(inReg);
                 if(out==null){
-                    Register spillRegister = spill.get(spillIndex++);
+                    Register spillRegister = spill.get(spillIndex);
+                    spillIndex++;
                     //spilled: add load instruction
-                    Label label = spilledLabels.get(def);
-                    post.add(new LA(spillRegister, label));
-                    post.add(new Store("sw", spillRegister,  spillRegister, 0));
+                    Label label = spilledLabels.get(inReg);
+                    pre.add(new LA(spillRegister, label));
+                    pre.add(new Load("lw", spillRegister,  spillRegister, 0));
                     instructionRegMap.put(inReg, spillRegister);
 
                 }else{
