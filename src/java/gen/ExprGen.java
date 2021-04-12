@@ -274,7 +274,7 @@ public class ExprGen extends BaseGen<Register> {
         Register addr = e.expr.accept(this);
         Register ret = new Register.Virtual();
         String loadI="lw";
-        if(e.expr.type.equals(BaseType.CHAR)){
+        if(e.type.equals(BaseType.CHAR)){
             loadI="lb";
         }
         asmSection.emitLoad(loadI, ret, addr, 0);
