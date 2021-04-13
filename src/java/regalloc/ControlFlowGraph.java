@@ -20,15 +20,47 @@ public class ControlFlowGraph{
             this.outgoingEdges = new LinkedList<>();
             this.liveIn = new ArrayList<>();
             this.liveOut = new ArrayList<>();
+
+            this.name = "I"+nameNum++;
         }
 
         public List<Node> outgoingEdges;
         public List<Node> incomingEdges;
 
+        public final String name;
+
         public final AssemblyItem.Instruction instruction;
 
         public ArrayList<Register> liveIn;
         public ArrayList<Register> liveOut;
+
+        private static int nameNum = 1;
+
+        public String dotHeader(){
+            return name +" [label=\""+instruction.toString()+"\"];\n";
+        }
+
+        public String dotEdges(){
+            String ret = "";
+            for(Node node: outgoingEdges){
+                ret += name + " -> " + node.name + ";\n";
+            }
+            return ret;
+        }
+    }
+
+    public String toDot(){
+        String ret="digraph CFG{\n";
+        for(Node node: nodes){
+            ret += node.dotHeader();
+        }
+        ret +="\n";
+        for(Node node: nodes){
+            ret += node.dotEdges();
+        }
+
+        ret +="}";
+        return ret;
     }
 
     private final List<Node> nodes;
@@ -127,7 +159,9 @@ public class ControlFlowGraph{
             }
         }
 
-        return new ControlFlowGraph(nodes);
+        ControlFlowGraph cfg =  new ControlFlowGraph(nodes);
+        //System.out.println(cfg.toDot());
+        return cfg;
     }
 
     //Do liveness analysis on this CFG
@@ -231,6 +265,8 @@ public class ControlFlowGraph{
             }
         }
 
-        return new LivenessGraph(new ArrayList<>(nodeMap.values()));
+        LivenessGraph lg = new LivenessGraph(new ArrayList<>(nodeMap.values()));
+        //System.out.println(lg.toDot());
+        return lg;
     }
 }

@@ -20,6 +20,32 @@ public class LivenessGraph{
 
         public final Register register;
         public ArrayList<Node> edges;
+
+        public String dotHeader(){
+            return register.toString() +" [label=\""+register.toString()+"\"];\n";
+        }
+
+        public String dotEdges(){
+            String ret = "";
+            for(Node node: edges){
+                ret += register.toString() + " -- " + node.register.toString() + ";\n";
+            }
+            return ret;
+        }
+    }
+
+    public String toDot(){
+        String ret="graph liveness{\n";
+        for(Node node: nodes){
+            ret += node.dotHeader();
+        }
+        ret +="\n";
+        for(Node node: nodes){
+            ret += node.dotEdges();
+        }
+
+        ret +="}";
+        return ret;
     }
 
     private final List<Node> nodes;
@@ -40,6 +66,7 @@ public class LivenessGraph{
         private final Map<Register, Label> spilledLabels;
 
         private final List<Register> toBeSaved;
+        private final ArrayList<Label> labelRegisters;
 
         
 
@@ -51,6 +78,7 @@ public class LivenessGraph{
             this.spilledLabels = spilledLabels;
 
             this.toBeSaved = new ArrayList<>();
+            this.labelRegisters = new ArrayList<>(spilledLabels.values());
 
             toBeSaved.addAll(this.spill);
             for(Register reg: this.registerAllocation.values()){
@@ -75,7 +103,7 @@ public class LivenessGraph{
             List<Instruction> ret = new LinkedList<>();
 
             Register tempRegister = spill.get(0);
-            for(Label label: spilledLabels.values()){
+            for(Label label: labelRegisters){
                 // load content of memory at label into register
                 ret.add(new LA(tempRegister, label));
                 ret.add(new Load("lw", tempRegister, tempRegister, 0));
@@ -106,13 +134,12 @@ public class LivenessGraph{
             
             Collections.reverse(toBeSaved);
 
-            List<Label> spilled = new ArrayList<>(spilledLabels.values());
-            Collections.reverse(spilled);
+            Collections.reverse(labelRegisters);
 
             Register temp1 = spill.get(0);
             Register temp2 = spill.get(1);
 
-            for(Label label: spilled){
+            for(Label label: labelRegisters){
                 // pop from stack into $t0
                 ret.add(new Load("lw", temp1, Register.Arch.sp, 0));
                 ret.add(new IInstruction("addi", Register.Arch.sp, Register.Arch.sp, 4));
@@ -121,6 +148,7 @@ public class LivenessGraph{
                 ret.add(new LA(temp2, label));
                 ret.add(new Store("sw", temp1, temp2, 0));
             }
+            Collections.reverse(labelRegisters);
             return ret;
         }
 
@@ -196,7 +224,7 @@ public class LivenessGraph{
 
         //Chaitin
 
-        final int availableRegistersSize = availableRegisters.size() - 3 ; //18 - 3 for spilling
+        int availableRegistersSize = availableRegisters.size() - 3 ; //18 - 3 for spilling
 
         Stack<Node> removedNodes = new Stack<Node>();
         List<Node> spilled = new ArrayList<Node>();
@@ -264,6 +292,10 @@ public class LivenessGraph{
                 }
             }
         }
+
+        /*for(Map.Entry alloc: registerAllocation.entrySet()){
+            System.out.println(alloc.getKey().toString()+"->"+alloc.getValue().toString());
+        }*/
 
         return new RegisterMap(registerAllocation, 
             availableRegisters.subList(availableRegistersSize, availableRegistersSize+3),

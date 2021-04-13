@@ -21,7 +21,7 @@ public class LessNaiveRegAlloc{
             }else{
                 ControlFlowGraph cfg = ControlFlowGraph.generateControlFlowGraph(section);
                 LivenessGraph lg = cfg.generateLivenessGraph();
-                ArrayList<Register> regList = new ArrayList();
+                ArrayList<Register> regList = new ArrayList<>();
                 Collections.addAll(regList, availableArchRegisters);
                 LivenessGraph.RegisterMap rm = 
                     lg.generateRegisterMap(regList);

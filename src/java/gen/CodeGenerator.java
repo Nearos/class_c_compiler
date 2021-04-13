@@ -24,9 +24,9 @@ public class CodeGenerator {
             .accept(new pass.MoveLocalVariablesToFunctionBlock())
             ;
 
-        System.out.println("AST after modification:\n");
+        //System.out.println("AST after modification:\n");
 
-        PrintWriter astWriter;
+        /*PrintWriter astWriter;
         StringWriter sw = new StringWriter();
         try {
             astWriter = new PrintWriter(sw);
@@ -36,7 +36,7 @@ public class CodeGenerator {
             astWriter.close();
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
 
         // generate an assembly program with the code generator
         AssemblyProgram asmProgWithVirtualRegs = new AssemblyProgram();

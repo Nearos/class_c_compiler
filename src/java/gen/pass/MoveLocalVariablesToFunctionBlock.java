@@ -37,6 +37,7 @@ public class MoveLocalVariablesToFunctionBlock extends BaseASTPass {
         for(Stmt stmt: b.statements){
             System.out.println(stmt);
             statements.add((Stmt) stmt.accept(this));
+            
         }
 
         return new Block(new LinkedList<>(), statements);

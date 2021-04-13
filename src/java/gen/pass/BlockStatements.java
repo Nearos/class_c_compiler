@@ -19,13 +19,13 @@ public class BlockStatements extends BaseASTPass {
         if(!(consequent instanceof Block)){
             List<Stmt> bs = new LinkedList<Stmt>();
             bs.add(consequent);
-            consequent = new Block(new LinkedList(), bs);
+            consequent = new Block(new LinkedList<>(), bs);
         }
 
         if(alternative != null && !(alternative instanceof Block)){
             List<Stmt> bs = new LinkedList<Stmt>();
             bs.add(alternative);
-            alternative = new Block(new LinkedList(), bs);
+            alternative = new Block(new LinkedList<>(), bs);
         }
 
         return new If(condition, consequent, alternative);
@@ -39,7 +39,7 @@ public class BlockStatements extends BaseASTPass {
         if(!(stmt instanceof Block)){
             List<Stmt> bs = new LinkedList<Stmt>();
             bs.add(stmt);
-            stmt = new Block(new LinkedList(), bs);
+            stmt = new Block(new LinkedList<>(), bs);
         }
 
         return new While(condition, stmt);
