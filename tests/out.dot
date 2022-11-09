@@ -1,0 +1,219 @@
+ast.Assign@214c265e
+ast.Assign@448139f0
+ast.Assign@7cca494b
+ast.Assign@7ba4f24f
+ast.Assign@3b9a45b3
+ast.Assign@7699a589
+ast.Assign@58372a00
+ast.Assign@4dd8dc3
+ast.Assign@6d03e736
+ast.Assign@568db2f2
+ast.Assign@378bf509
+ast.Assign@5fd0d5ae
+ast.Assign@2d98a335
+ast.Assign@16b98e56
+ast.Assign@7ef20235
+ast.Assign@27d6c5e0
+ast.Assign@4f3f5b24
+ast.Assign@15aeb7ab
+ast.Assign@7b23ec81
+ast.Assign@6acbcfc0
+ast.Assign@5f184fc6
+ast.Assign@3feba861
+ast.Assign@5b480cf9
+ast.Assign@6f496d9f
+ast.Assign@723279cf
+ast.While@10f87f48
+ast.Assign@b4c966a
+ast.Assign@2f4d3709
+ast.Assign@4e50df2e
+ast.Assign@1d81eb93
+ast.Assign@7291c18f
+ast.Assign@34a245ab
+ast.Assign@7cc355be
+ast.While@6e8cf4c6
+ast.If@12edcd21
+ast.If@34c45dca
+ast.Assign@52cc8049
+ast.Assign@5b6f7412
+ast.If@27973e9b
+ast.Assign@312b1dae
+ast.If@7530d0a
+ast.If@27bc2616
+ast.If@3941a79c
+ast.If@506e1b77
+ast.If@4fca772d
+ast.If@9807454
+ast.If@3d494fbf
+ast.If@1ddc4ec2
+ast.Assign@133314b
+ast.Assign@b1bc7ed
+ast.Assign@7cd84586
+ast.Assign@30dae81
+ast.Assign@1b2c6ec2
+ast.Assign@4edde6e5
+ast.Assign@70177ecd
+ast.Assign@1e80bfe8
+ast.Assign@66a29884
+ast.Assign@4769b07b
+ast.If@cc34f4d
+ast.If@17a7cec2
+ast.Assign@65b3120a
+ast.Assign@6f539caf
+ast.Assign@79fc0f2f
+ast.Assign@50040f0c
+ast.Assign@2dda6444
+ast.Assign@5e9f23b4
+ast.Assign@4783da3f
+ast.Assign@378fd1ac
+ast.Return@49097b5d
+ast.ExprStmt@6e2c634b
+ast.ExprStmt@37a71e93
+AST after modification:
+
+Program(
+  FunDecl(VOID,mcmalloc,VarDecl(PointerType(PointerType(VOID)),return),VarDecl(INT,size),  Block(
+
+  )), 
+  FunDecl(VOID,read_i,VarDecl(PointerType(INT),return),  Block(
+
+  )), 
+  FunDecl(VOID,read_c,VarDecl(PointerType(CHAR),return),  Block(
+
+  )), 
+  FunDecl(VOID,print_c,VarDecl(CHAR,c),  Block(
+
+  )), 
+  FunDecl(VOID,print_i,VarDecl(INT,i),  Block(
+
+  )), 
+  FunDecl(VOID,print_s,VarDecl(PointerType(CHAR),s),  Block(
+
+  )), 
+  FunDecl(VOID,a,VarDecl(PointerType(INT),return),  Block(
+    VarDecl(ArrayType(INT, 15),b), 
+    VarDecl(INT,c), 
+    VarDecl(INT,d), 
+    VarDecl(INT,e), 
+    VarDecl(INT,f), 
+    VarDecl(INT,g), 
+    VarDecl(INT,h), 
+    VarDecl(INT,i), 
+    VarDecl(INT,j), 
+    VarDecl(INT,k), 
+    VarDecl(ArrayType(INT, 13),l), 
+    VarDecl(INT,m), 
+    VarDecl(INT,n), 
+    VarDecl(INT,o), 
+    VarDecl(INT,p), 
+    VarDecl(INT,q), 
+    VarDecl(INT,r), 
+    VarDecl(INT,s), 
+    VarDecl(INT,t), 
+    VarDecl(INT,u), 
+    VarDecl(INT,v), 
+    VarDecl(INT,w), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(0)), IntLiteral(4)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(1)), IntLiteral(32)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(2)), IntLiteral(247)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(3)), IntLiteral(212)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(4)), IntLiteral(5)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(5)), IntLiteral(35)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(6)), IntLiteral(6)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(7)), IntLiteral(1)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(8)), IntLiteral(134)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(9)), IntLiteral(87)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(10)), IntLiteral(149)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(11)), IntLiteral(42)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(12)), IntLiteral(27)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(13)), IntLiteral(15)), 
+    Assign(ArrayAccessExpr(VarExpr(b), IntLiteral(14)), IntLiteral(4)), 
+    Assign(VarExpr(c), IntLiteral(4)), 
+    Assign(VarExpr(d), IntLiteral(32)), 
+    Assign(VarExpr(e), IntLiteral(247)), 
+    Assign(VarExpr(f), IntLiteral(212)), 
+    Assign(VarExpr(g), IntLiteral(5)), 
+    Assign(VarExpr(h), IntLiteral(35)), 
+    Assign(VarExpr(i), IntLiteral(6)), 
+    Assign(VarExpr(j), IntLiteral(1)), 
+    Assign(VarExpr(k), IntLiteral(134)), 
+    Assign(VarExpr(m), IntLiteral(0)), 
+    While(BinOp(VarExpr(m), LT, IntLiteral(13)),     Block(
+      Assign(ArrayAccessExpr(VarExpr(l), VarExpr(m)), ArrayAccessExpr(VarExpr(b), VarExpr(m))), 
+      Assign(VarExpr(m), BinOp(VarExpr(m), ADD, IntLiteral(1)))
+    )), 
+    Assign(VarExpr(n), BinOp(IntLiteral(4), ADD, IntLiteral(4))), 
+    Assign(VarExpr(o), BinOp(IntLiteral(32), ADD, IntLiteral(32))), 
+    Assign(VarExpr(p), BinOp(IntLiteral(247), SUB, IntLiteral(247))), 
+    Assign(VarExpr(q), IntLiteral(0)), 
+    Assign(VarExpr(r), IntLiteral(0)), 
+    While(BinOp(VarExpr(q), LT, IntLiteral(248)),     Block(
+      If(BinOp(VarExpr(q), LT, IntLiteral(158)),       Block(
+        Assign(VarExpr(s), BinOp(IntLiteral(0), SUB, BinOp(IntLiteral(0), SUB, BinOp(BinOp(ArrayAccessExpr(VarExpr(b), BinOp(VarExpr(q), DIV, IntLiteral(15))), SUB, IntLiteral(4)), SUB, BinOp(ArrayAccessExpr(VarExpr(b), BinOp(VarExpr(q), MOD, IntLiteral(15))), ADD, IntLiteral(3))))))
+      ),       Block(
+        If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), LT, IntLiteral(15)),         Block(
+          Assign(VarExpr(t), ArrayAccessExpr(VarExpr(b), BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3))))
+        ),         Block(
+          Assign(VarExpr(t), ArrayAccessExpr(VarExpr(b), BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), SUB, IntLiteral(15))))
+        )), 
+        If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), LT, IntLiteral(9)),         Block(
+          If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), EQ, IntLiteral(0)),           Block(
+            Assign(VarExpr(w), VarExpr(c))
+          ),           Block(
+            If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), EQ, IntLiteral(1)),             Block(
+              Assign(VarExpr(w), VarExpr(d))
+            ),             Block(
+              If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), EQ, IntLiteral(2)),               Block(
+                Assign(VarExpr(w), VarExpr(e))
+              ),               Block(
+                If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), EQ, IntLiteral(3)),                 Block(
+                  Assign(VarExpr(w), VarExpr(f))
+                ),                 Block(
+                  If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), EQ, IntLiteral(4)),                   Block(
+                    Assign(VarExpr(w), VarExpr(g))
+                  ),                   Block(
+                    If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), EQ, IntLiteral(5)),                     Block(
+                      Assign(VarExpr(w), VarExpr(h))
+                    ),                     Block(
+                      If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), EQ, IntLiteral(6)),                       Block(
+                        Assign(VarExpr(w), VarExpr(i))
+                      ),                       Block(
+                        If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), EQ, IntLiteral(7)),                         Block(
+                          Assign(VarExpr(w), VarExpr(j))
+                        ),                         Block(
+                          Assign(VarExpr(w), VarExpr(k))
+                        ))
+                      ))
+                    ))
+                  ))
+                ))
+              ))
+            ))
+          )), 
+          Assign(VarExpr(u), VarExpr(w))
+        ),         Block(
+          Assign(VarExpr(u), ArrayAccessExpr(VarExpr(b), BinOp(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), SUB, IntLiteral(9)), MOD, IntLiteral(15))))
+        )), 
+        If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), MOD, IntLiteral(3)), EQ, IntLiteral(0)),         Block(
+          Assign(VarExpr(v), VarExpr(n))
+        ),         Block(
+          If(BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), MOD, IntLiteral(3)), EQ, IntLiteral(1)),           Block(
+            Assign(VarExpr(v), VarExpr(o))
+          ),           Block(
+            Assign(VarExpr(v), VarExpr(p))
+          ))
+        )), 
+        Assign(VarExpr(s), BinOp(BinOp(BinOp(VarExpr(t), ADD, BinOp(ArrayAccessExpr(VarExpr(b), BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), DIV, IntLiteral(15))), MUL, ArrayAccessExpr(VarExpr(b), BinOp(BinOp(BinOp(VarExpr(q), SUB, IntLiteral(158)), DIV, IntLiteral(3)), MOD, IntLiteral(15))))), ADD, VarExpr(u)), SUB, VarExpr(v)))
+      )), 
+      Assign(VarExpr(r), BinOp(VarExpr(s), ADD, VarExpr(r))), 
+      Assign(VarExpr(q), BinOp(VarExpr(q), ADD, IntLiteral(1)))
+    )), 
+    Assign(ValueAtExpr(VarExpr(return)), VarExpr(r)), 
+    Return()
+  )), 
+  FunDecl(VOID,main,  Block(
+    VarDecl(INT,), 
+    ExprStmt(FunCallExpr(a, AddressOfExpr(VarExpr()))), 
+    ExprStmt(FunCallExpr(print_i, VarExpr()))
+  ))
+)

@@ -35,8 +35,10 @@ public class MoveLocalVariablesToFunctionBlock extends BaseASTPass {
 
         List<Stmt> statements = new LinkedList<>();
         for(Stmt stmt: b.statements){
-            System.out.println(stmt);
+            System.out.println(stmt);// <- Affects behaviour for some reason... Single-threaded. 
+
             statements.add((Stmt) stmt.accept(this));
+            
             
         }
 
